@@ -14,12 +14,20 @@ export default function ChatBar(props) {
     sendMessage(messageText);
     setMessageText("");
   };
-  const handleInput = e => {
-    setMessageText(e.target.value);
+  const handleInput = e => setMessageText(e.target.value);
+  const handleKeyPress = e => {
+    if (e.key === "Enter") {
+      handleMessageSend();
+    }
   };
   return (
     <ChatBarLayout>
-      <ChatBarInput type="text" value={messageText} onChange={handleInput} />
+      <ChatBarInput
+        type="text"
+        value={messageText}
+        onChange={handleInput}
+        onKeyDown={handleKeyPress}
+      />
       <ChatBarButton onClick={handleMessageSend} />
     </ChatBarLayout>
   );
