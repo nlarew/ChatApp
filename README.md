@@ -1,2 +1,0 @@
-# ChatApp
-Created with CodeSandbox
