@@ -54,6 +54,7 @@ const MESSAGES = [
 export default function ChatRoom(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState("");
   useEffect(() => {
     // Set up the collection watch stream
     // TODO: Need to know the document structure
@@ -68,8 +69,6 @@ export default function ChatRoom(props) {
     };
     setMessages([...messages, { ts, from, text }]);
   };
-
-  const [messageText, setMessageText] = useState("");
 
   return (
     <ChatLayout>

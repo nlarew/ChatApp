@@ -6,14 +6,17 @@ import format from "date-fns/format";
 
 export default function ChatMessage(props) {
   const { ts, from, text } = props.message;
-  const direction = props.fromCurrentUser ? "right" : "left";
+  const direction = props.isFromCurrentUser ? "right" : "left";
+  const { isLastFromUser, isFirstFromUser } = props;
   return (
-    <Layout>
-      <Header>
-        <Sender direction={direction}>{from.name}</Sender>
-      </Header>
+    <Layout isLastFromUser={isLastFromUser} isFirstFromUser={isFirstFromUser}>
+      {!props.noHeader && (
+        <Header>
+          <Sender direction={direction}>{from.name}</Sender>
+        </Header>
+      )}
       <Content>
-        <Message direction={direction}>
+        <Message direction={direction} hasNext={!isLastFromUser}>
           <Timestamp direction={direction} ts={ts} />
           <div
             css={css`
@@ -28,7 +31,9 @@ export default function ChatMessage(props) {
   );
 }
 const Layout = styled.div`
-  margin: 4px 12px;
+  margin: 6px 12px;
+  margin-top: ${props => (props.isFirstFromUser ? "6px" : "0px")};
+  margin-bottom: ${props => (props.isLastFromUser ? "6px" : "0px")};
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -39,7 +44,6 @@ const Header = styled.div`
 `;
 const Content = styled.div`
   height: 100%;
-  margin-top: 6px;
   display: flex;
 `;
 const Sender = styled.p`
@@ -60,6 +64,10 @@ const Message = styled.div`
     props.direction === "left" ? "0px" : "12px"};
   border-top-right-radius: ${props =>
     props.direction === "right" ? "0px" : "12px"};
+  border-bottom-left-radius: ${props =>
+    props.direction === "left" ? props.hasNext && "0px" : "12px"};
+  border-bottom-right-radius: ${props =>
+    props.direction === "right" ? props.hasNext && "0px" : "12px"};
   padding: 10px;
 `;
 const Timestamp = props => {

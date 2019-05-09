@@ -5,7 +5,6 @@ import styled from "@emotion/styled";
 import Textarea from "react-textarea-autosize";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { Scrollbars } from "react-custom-scrollbars";
 
 const SendIcon = () => <FontAwesomeIcon icon={faPaperPlane} />;
 
@@ -34,7 +33,7 @@ const ChatBarLayout = styled.div`
   // align-items: center;
   padding: 12px 12px;
   box-sizing: border-box;
-  flex-grow: 1;
+  flex-grow: 0;
 `;
 const ChatBarTextArea = styled(Textarea)`
   padding-left: 8px;
@@ -74,8 +73,8 @@ const ChatBarButton = props => {
     <button
       css={css`
         height: 100%;
-        border-radius: 12px;
-        line-height: 24px;
+        border-radius: 4px;
+        line-height: 16px;
         font-size: 16px;
         text-align: center;
         border: none;
