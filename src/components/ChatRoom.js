@@ -16,7 +16,7 @@ const USER = {
 
 const MESSAGES = [
   {
-    ts: 1557355231922,
+    ts: 1557351231922,
     from: { id: "40391024481629829197", name: "Jack Example" },
     text: "Wanna meet up with Tim at 8 for dinner?",
   },

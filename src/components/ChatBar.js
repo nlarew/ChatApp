@@ -11,8 +11,10 @@ const SendIcon = () => <FontAwesomeIcon icon={faPaperPlane} />;
 export default function ChatBar(props) {
   const { sendMessage, setMessageText, messageText } = props;
   const handleMessageSend = () => {
-    sendMessage(messageText);
-    setMessageText("");
+    if (messageText) {
+      sendMessage(messageText);
+      setMessageText("");
+    }
   };
   const handleInput = e => setMessageText(e.target.value);
   const handleKeyPress = e => {
@@ -28,7 +30,10 @@ export default function ChatBar(props) {
         onChange={handleInput}
         onKeyDown={handleKeyPress}
       />
-      <ChatBarButton onClick={handleMessageSend} />
+      <ChatBarButton
+        disabled={messageText.length === 0}
+        onClick={handleMessageSend}
+      />
     </ChatBarLayout>
   );
 }
@@ -60,7 +65,7 @@ const ChatBarTextArea = styled(Textarea)`
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
   }
 `;
-const ChatBarInput = styled("input")`
+const ChatBarInput = styled.input`
   padding-left: 8px;
   padding-right: 8px;
   border: none;
@@ -68,9 +73,7 @@ const ChatBarInput = styled("input")`
   flex-grow: 1;
   line-height: 24px;
   font-size: 16px;
-  // overflow-x: scroll;
   max-height: 100%;
-  // min-height: 100%;
   &:focus {
     outline: 0;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
@@ -87,13 +90,13 @@ const ChatBarButton = props => {
         text-align: center;
         border: none;
         margin-left: 12px;
-        background-color: transparent;
-        background-color: rgba(0, 123, 255, 0.25);
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+        background-color: ${props.disabled
+          ? "transparent"
+          : "rgba(0, 123, 255, 0.25)"};
+        color: ${props.disabled ? "darkgray" : "black"};
         &:focus,
         :hover {
-          // background-color: darkblue;
-          // color: white;
           outline: 0;
           box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
         }
