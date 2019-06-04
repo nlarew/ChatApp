@@ -71,14 +71,16 @@ export default function ChatRoom(props) {
   };
 
   return (
-    <ChatLayout>
-      <ChatFeed messages={messages} />
-      <ChatBar
-        sendMessage={sendMessage}
-        setMessageText={setMessageText}
-        messageText={messageText}
-      />
-    </ChatLayout>
+    !isLoading && (
+      <ChatLayout>
+        <ChatFeed messages={messages} />
+        <ChatBar
+          sendMessage={sendMessage}
+          setMessageText={setMessageText}
+          messageText={messageText}
+        />
+      </ChatLayout>
+    )
   );
 }
 const ChatLayout = styled.div`

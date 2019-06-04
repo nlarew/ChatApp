@@ -1,12 +1,9 @@
 /** @jsx jsx */
-import React, { useRef, useState, useEffect } from "react";
+import React from "react";
 import { css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
 import Textarea from "react-textarea-autosize";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-
-const SendIcon = () => <FontAwesomeIcon icon={faPaperPlane} />;
 
 export default function ChatBar(props) {
   const { sendMessage, setMessageText, messageText } = props;
@@ -23,21 +20,21 @@ export default function ChatBar(props) {
     }
   };
   return (
-    <ChatBarLayout>
-      <ChatBarInput
+    <Layout>
+      <MessageInput
         type="text"
         value={messageText}
         onChange={handleInput}
         onKeyDown={handleKeyPress}
       />
-      <ChatBarButton
+      <SendButton
         disabled={messageText.length === 0}
         onClick={handleMessageSend}
       />
-    </ChatBarLayout>
+    </Layout>
   );
 }
-const ChatBarLayout = styled.div`
+const Layout = styled.div`
   width: 100%;
   min-height: 52px;
   background-color: lightgray;
@@ -65,7 +62,7 @@ const ChatBarTextArea = styled(Textarea)`
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
   }
 `;
-const ChatBarInput = styled.input`
+const MessageInput = styled.input`
   padding-left: 8px;
   padding-right: 8px;
   border: none;
@@ -79,7 +76,7 @@ const ChatBarInput = styled.input`
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
   }
 `;
-const ChatBarButton = props => {
+const SendButton = props => {
   return (
     <button
       css={css`

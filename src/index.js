@@ -4,8 +4,26 @@ import ChatRoom from "./components/ChatRoom.js";
 import "./styles.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { handleOAuthRedirects } from "./stitch";
+import { StitchAuthProvider, useStitchAuth } from "./components/StitchAuth";
+import LoginScreen from "./components/LoginScreen.js";
 
-library.add(faPaperPlane);
+handleOAuthRedirects();
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<ChatRoom />, rootElement);
+library.add(faPaperPlane);
+
+const RequireLogin = props => {
+  const { isLoggedIn } = useStitchAuth();
+  return isLoggedIn ? props.children : <LoginScreen />;
+};
+
+const App = () => (
+  <StitchAuthProvider>
+    <RequireLogin>
+      <ChatRoom />
+    </RequireLogin>
+  </StitchAuthProvider>
+);
+
+ReactDOM.render(<App />, rootElement);
