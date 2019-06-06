@@ -2,7 +2,7 @@ import React from "react";
 import {
   hasLoggedInUser,
   loginAnonymous,
-  logoutCurrentUser,
+  logout,
   getCurrentUser,
 } from "./../stitch";
 
@@ -42,7 +42,7 @@ export function StitchAuthProvider(props) {
   const handleLogout = React.useCallback(async () => {
     const { isLoggedIn } = authState;
     if (isLoggedIn) {
-      await logoutCurrentUser();
+      await logout();
       setAuthState(authState => ({
         ...authState,
         isLoggedIn: false,

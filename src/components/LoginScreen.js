@@ -33,7 +33,7 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 48px);
   box-sizing: border-box;
   background-color: lightgoldenrodyellow;
 `;

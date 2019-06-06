@@ -16,7 +16,9 @@
     "react-dom": "16.8.6",
     "react-scripts": "2.1.8",
     "react-scroll": "1.7.11",
-    "react-textarea-autosize": "7.1.0"
+    "react-textarea-autosize": "7.1.0",
+    "typography": "0.16.19",
+    "typography-theme-us-web-design-standards": "0.16.19"
   },
   "devDependencies": {
     "typescript": "3.3.3"

@@ -18,42 +18,29 @@ const app = Stitch.hasAppClient(APP_ID)
  * Authentication
  */
 
-const {
-  loginWithCredential,
-  loginWithRedirect,
-  handleRedirectResult,
-  logoutUserWithId,
-} = app.auth;
-
 export async function loginAnonymous() {
-  console.log("hi", app);
-  const result = await app.auth.loginWithCredential(new AnonymousCredential());
-  console.log("result", result);
-  return result;
-  // return await loginWithCredential(new AnonymousCredential());
+  return await app.auth.loginWithCredential(new AnonymousCredential());
 }
 export async function loginFacebook() {
-  return await loginWithRedirect(new FacebookRedirectCredential());
+  return await app.auth.loginWithRedirect(new FacebookRedirectCredential());
 }
 export function hasLoggedInUser() {
   return app.auth.isLoggedIn;
 }
-
 export function getCurrentUser() {
   return app.auth.isLoggedIn ? app.auth.user : null;
 }
 export function handleOAuthRedirects() {
-  if (app.auth.hasRedirectResult()) handleRedirectResult();
+  if (app.auth.hasRedirectResult()) app.auth.handleRedirectResult();
 }
 export async function logout() {
   const { currentUser } = app.auth;
-  return currentUser && (await logoutUserWithId(currentUser.id));
+  return currentUser && (await app.auth.logoutUserWithId(currentUser.id));
 }
 
 /**
  * MongoDB
  */
-
 const mongodb = app.getServiceClient(
   RemoteMongoClient.factory,
   "mongodb-atlas",

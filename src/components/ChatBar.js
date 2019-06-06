@@ -100,12 +100,7 @@ const SendButton = props => {
       `}
       onClick={props.onClick}
     >
-      <FontAwesomeIcon
-        icon="paper-plane"
-        css={css`
-          padding: 2px 8px;
-        `}
-      />
+      <FontAwesomeIcon icon="paper-plane" />
     </button>
   );
 };

@@ -15,42 +15,34 @@ const USER = {
 
 const ChatFeed = props => {
   const { messages } = props;
-  useEffect(
-    () => {
-      scroll.scrollToBottom({
-        containerId: "feed",
-        duration: 320,
-        delay: 40,
-      });
-    },
-    [messages],
-  );
+  useEffect(() => {
+    scroll.scrollToBottom({
+      containerId: "feed",
+      duration: 320,
+      delay: 40,
+    });
+  }, [messages]);
   const isFromCurrentUser = message => {
     return !!message && message.from.id === USER.id;
+  };
+  const isFromSameUser = (prevMessage, thisMessage) => {
+    if (!prevMessage || !thisMessage) return false;
+    return prevMessage.from.id === thisMessage.from.id;
   };
   return (
     <ChatFeedLayout id="feed">
       <Feed messages={messages}>
-        {messages.map((m, i) => {
+        {messages.map((msg, i) => {
           const isFirst = i === 0;
-          const isLast = i === messages.length - 1;
-          const prevIsFromCurrentUser =
-            isFromCurrentUser(messages[i - 1]) || false;
-          const nextIsFromCurrentUser =
-            isFromCurrentUser(messages[i + 1]) || false;
-          const isFirstFromUser =
-            isFirst || isFromCurrentUser(m)
-              ? !prevIsFromCurrentUser
-              : prevIsFromCurrentUser;
-          const isLastFromUser =
-            isLast || isFromCurrentUser(m)
-              ? !nextIsFromCurrentUser
-              : nextIsFromCurrentUser;
+          const prev = !isFirst && messages[i - 1];
+          const next = !isFirst && messages[i - 1];
+          const isFirstFromUser = !isFromSameUser(prev, msg);
+          const isLastFromUser = !isFromSameUser(msg, next);
           return (
             <ChatMessage
-              key={m.ts}
-              message={m}
-              isFromCurrentUser={isFromCurrentUser(m)}
+              key={msg.ts}
+              message={msg}
+              isFromCurrentUser={isFromCurrentUser(msg)}
               noHeader={!isFirstFromUser}
               isFirstFromUser={isFirstFromUser}
               isLastFromUser={isLastFromUser}
