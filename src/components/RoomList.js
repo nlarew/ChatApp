@@ -52,6 +52,9 @@ function Room({ room, ...props }) {
       <RoomData>
         {room.messages.length} <MessagesIcon />
       </RoomData>
+      <RoomAction onClick={() => alert("hi")}>
+        <DeleteIcon />
+      </RoomAction>
     </RoomListItem>
   );
 }
@@ -76,8 +79,20 @@ const RoomData = styled.div`
   text-align: right;
   border: none;
   margin-left: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
   color: ${props => (props.disabled ? "darkgray" : "black")};
+`;
+const RoomAction = styled.button`
+  padding: 8px 10px;
+  border-radius: 4px;
+  line-height: 16px;
+  font-size: 16px;
+  text-align: right;
+  border: none;
+  margin-left: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #e53a40;
+  color: white;
 `;
 const MembersIcon = () => <FontAwesomeIcon icon="users" />;
 const MessagesIcon = () => <FontAwesomeIcon icon="comments" />;
+const DeleteIcon = () => <FontAwesomeIcon icon="trash-alt" />;

@@ -3,14 +3,19 @@ import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
 import useModal from "./useModal";
 import { createChatroom } from "./../stitch";
-import { useInput } from "react-hanger";
+import InputModalCard from "./InputModalCard";
 
-export default function Navbar({ currentRoom, unsetCurrentRoom }) {
-  const [NewRoomModal, newRoomModalIsOpen, newRoomModalActions] = useModal(
-    "createNewRoom",
-  );
-  const { openModal } = newRoomModalActions;
-  const { isLoggedIn, actions } = useStitchAuth();
+export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
+  const {
+    isLoggedIn,
+    actions: { handleLogout },
+  } = useStitchAuth();
+  const [Modal, isOpen, { openModal, closeModal }] = useModal("createNewRoom");
+  const createRoomWithName = async name => {
+    const room = await createChatroom({ name });
+    addRoom(room);
+    closeModal();
+  };
   return (
     <NavbarLayout>
       <NavbarLeft>
@@ -20,18 +25,15 @@ export default function Navbar({ currentRoom, unsetCurrentRoom }) {
           ) : (
             <>
               <button onClick={() => openModal()}>Create a New Room</button>
-              <NewRoomModal isOpen={newRoomModalIsOpen}>
-                <NewChatroomCard
-                  createChatroom={createChatroom}
-                  closeModal={newRoomModalActions.closeModal}
-                />
-              </NewRoomModal>
+              <Modal isOpen={isOpen}>
+                <InputModalCard handleSubmit={createRoomWithName} />
+              </Modal>
             </>
           ))}
       </NavbarLeft>
       {currentRoom && currentRoom.name}
       <NavbarRight>
-        {isLoggedIn && <button onClick={actions.handleLogout}>Log Out</button>}
+        {isLoggedIn && <button onClick={handleLogout}>Log Out</button>}
       </NavbarRight>
     </NavbarLayout>
   );
@@ -56,58 +58,4 @@ const NavbarRight = styled.div`
   margin-left: auto;
   display: flex;
   justify-content: flex-end;
-`;
-const Card = styled.div`
-  width: 100%;
-  /* display: flex;
-  flex-direction: column; */
-  background: white;
-  padding: 14px;
-  border-radius: 4px;
-  border: 0.5px solid rgba(0, 0, 0, 0.5);
-  text-align: center;
-`;
-const CardHeader = styled.h1``;
-const CardContent = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  align-items: center;
-`;
-
-const NewChatroomCard = ({ createChatroom, closeModal, addRoom }) => {
-  const newRoomInput = useInput("");
-  const handleSubmit = async () => {
-    const name = newRoomInput.value;
-    const room = await createChatroom({ name });
-    addRoom(room);
-    newRoomInput.clear();
-    closeModal();
-  };
-  return (
-    <Card>
-      <CardHeader>Create a New Room</CardHeader>
-      <CardContent>
-        <ActionInput>
-          <Input
-            placeholder="Room Name"
-            value={newRoomInput.value}
-            onChange={newRoomInput.onChange}
-          />
-          <button onClick={handleSubmit}>Create</button>
-        </ActionInput>
-      </CardContent>
-    </Card>
-  );
-};
-const ActionInput = styled.div`
-  width: 80%;
-  display: flex;
-  margin-bottom: 26px;
-`;
-const Input = styled.input`
-  flex-grow: 1;
-  padding: 10px;
 `;
