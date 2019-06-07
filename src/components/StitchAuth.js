@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   hasLoggedInUser,
   logout,
@@ -30,28 +30,29 @@ export function StitchAuthProvider(props) {
     currentUser: getCurrentUser(),
   });
 
-  // Authentication Actions
-  const handleAnonymousLogin = React.useCallback(async () => {
-    const { isLoggedIn } = authState;
-    if (!isLoggedIn) {
-      const loggedInUser = await loginAnonymous();
-      setAuthState(authState => ({
-        ...authState,
-        isLoggedIn: true,
-        currentUser: loggedInUser,
-      }));
-    }
-  }, [authState]);
-  const handleOAuthLogin = React.useCallback(
+  const setLoggedInUserState = loggedInUser => {
+    setAuthState(authState => ({
+      ...authState,
+      isLoggedIn: true,
+      currentUser: loggedInUser,
+    }));
+  };
+  const setLoggedOutUserState = () => {
+    setAuthState(authState => ({
+      ...authState,
+      isLoggedIn: false,
+      currentUser: null,
+    }));
+  };
+
+  const handleLogin = React.useCallback(
     async provider => {
-      const { isLoggedIn } = authState;
       const loginMethod = {
-        facebook: loginFacebook,
-        google: loginGoogle,
+        anonymous: () => loginAnonymous().then(setLoggedInUserState),
+        facebook: () => loginFacebook(),
+        google: () => loginGoogle(),
       }[provider];
-      if (!isLoggedIn) {
-        loginMethod();
-      }
+      if (!authState.isLoggedIn) loginMethod();
     },
     [authState],
   );
@@ -60,11 +61,7 @@ export function StitchAuthProvider(props) {
     const { isLoggedIn } = authState;
     if (isLoggedIn) {
       await logout();
-      setAuthState(authState => ({
-        ...authState,
-        isLoggedIn: false,
-        currentUser: null,
-      }));
+      setLoggedOutUserState();
     } else {
       console.log(`can't handleLogout when no user is logged in`);
     }
@@ -73,28 +70,30 @@ export function StitchAuthProvider(props) {
   // We useMemo to improve performance by eliminating some re-renders
   const authInfo = React.useMemo(() => {
     const { isLoggedIn, currentUser } = authState;
-    const handleRedirects = async () => {
-      const loggedInUser = await handleOAuthRedirects();
-      if (loggedInUser) {
-        setAuthState(authState => ({
-          ...authState,
-          isLoggedIn: true,
-          currentUser: loggedInUser,
-        }));
-      }
-    };
+    // const handleRedirects = async () => {
+    //   const loggedInUser = await handleOAuthRedirects();
+    //   console.log("handleRedirects - handled", loggedInUser);
+    //   if (loggedInUser) {
+    //     setAuthState(authState => ({
+    //       ...authState,
+    //       isLoggedIn: true,
+    //       currentUser: loggedInUser,
+    //     }));
+    //   }
+    // };
     const value = {
       isLoggedIn,
       currentUser,
       actions: {
-        handleAnonymousLogin,
-        handleOAuthLogin,
-        handleRedirects,
+        // handleAnonymousLogin,
+        // handleOAuthLogin,
+        handleLogin,
+        // handleRedirects,
         handleLogout,
       },
     };
     return value;
-  }, [authState, handleAnonymousLogin, handleOAuthLogin, handleLogout]);
+  }, [authState, handleLogin, handleLogout]);
 
   return (
     <StitchAuthContext.Provider value={authInfo}>

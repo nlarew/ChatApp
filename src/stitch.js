@@ -14,18 +14,23 @@ const APP_ID = "chatapp-axspa";
 const app = Stitch.hasAppClient(APP_ID)
   ? Stitch.getAppClient(APP_ID)
   : Stitch.initializeAppClient(APP_ID);
-
+export { app };
 /**
  * Authentication
  */
-
+export function getAllUsers() {
+  return app.auth.listUsers();
+}
 export async function loginAnonymous() {
+  console.log("logging in with anonymous");
   return await app.auth.loginWithCredential(new AnonymousCredential());
 }
 export async function loginFacebook() {
+  console.log("logging in with facebook");
   return await app.auth.loginWithRedirect(new FacebookRedirectCredential());
 }
 export async function loginGoogle() {
+  console.log("logging in with google");
   return await app.auth.loginWithRedirect(new GoogleRedirectCredential());
 }
 export function hasLoggedInUser() {
@@ -34,16 +39,17 @@ export function hasLoggedInUser() {
 export function getCurrentUser() {
   return app.auth.isLoggedIn ? app.auth.user : null;
 }
-export async function handleOAuthRedirects() {
-  if (app.auth.hasRedirectResult()) {
-    console.log("hasRedirectResult");
-    const user = await app.auth.handleRedirectResult();
-    console.log("hasRedirectResult - user", user);
+export const handleOAuthRedirects = async () => {
+  const { auth } = app;
+  if (auth.hasRedirectResult()) {
+    console.log("hasRedirectResult - true");
+    const user = await auth.handleRedirectResult();
+    return user;
   } else {
-    console.log("!hasRedirectResult");
+    console.log("hasRedirectResult - false");
     return getCurrentUser();
   }
-}
+};
 export async function logout() {
   const { currentUser } = app.auth;
   return currentUser && (await app.auth.logoutUserWithId(currentUser.id));
@@ -64,6 +70,24 @@ export const chatrooms = mongodb.db("chat").collection("rooms");
 
 export function getChatrooms() {
   return chatrooms.find({}).toArray();
+}
+
+export function searchForChatrooms(searchText) {
+  return chatrooms
+    .find({
+      public: true,
+      members: { $nin: [app.auth.currentUser.id] },
+      name: { $regex: searchText },
+    })
+    .toArray();
+}
+
+export function getChatroomsUserIsIn() {
+  if (app.auth.currentUser) {
+    return chatrooms.find({ members: app.auth.currentUser.id }).toArray();
+  } else {
+    return [];
+  }
 }
 
 export async function createChatroom({ name }) {

@@ -6,6 +6,7 @@ import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
 import { useWatchChatrooms } from "./useChatroom";
+import update from "ramda/es/update";
 
 export default () => (
   <StitchAuthProvider>
@@ -17,7 +18,13 @@ function ChatApp() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentRoom, setCurrentRoom] = useState(null);
   const [rooms, { addRoom, updateRooms }] = useWatchChatrooms();
-  const { isLoggedIn, actions, currentUser } = useStitchAuth();
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     handleRedirects()
+  //       .then(updateRooms)
+  //       .then(() => setIsLoading(false));
+  //   }
+  // }, [isLoading, handleRedirects, updateRooms]);
   useEffect(() => {
     if (currentRoom) {
       const updatedRoom = rooms.find(
@@ -26,6 +33,7 @@ function ChatApp() {
       setCurrentRoom(updatedRoom || null);
     }
   }, [rooms, currentRoom]);
+
   return (
     <Layout>
       <Navbar
@@ -36,7 +44,6 @@ function ChatApp() {
       <RequireLogin
         onLogout={() => setCurrentRoom(null)}
         updateRooms={updateRooms}
-        finishLoading={() => setIsLoading(false)}
         isLoading={isLoading}
       >
         {currentRoom ? (
@@ -54,28 +61,12 @@ const Layout = styled.div`
   width: 100%;
   height: 100vh;
 `;
-function RequireLogin({
-  onLogout = () => {},
-  finishLoading = () => {},
-  isLoading,
-  ...props
-}) {
-  const {
-    isLoggedIn,
-    actions: { handleRedirects },
-  } = useStitchAuth();
-
-  useEffect(() => {
-    handleRedirects()
-      .then(props.updateRooms)
-      .then(finishLoading);
-  }, []);
-
+function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
+  const { isLoggedIn } = useStitchAuth();
   useEffect(() => {
     if (!isLoading) {
       !isLoggedIn && onLogout();
     }
   }, [isLoggedIn, onLogout, isLoading]);
-
   return isLoggedIn ? props.children : <LoginScreen />;
 }

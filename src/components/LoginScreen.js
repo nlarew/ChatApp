@@ -14,7 +14,7 @@ export default function LoginScreen(props) {
           <ButtonGroup>
             <ProviderButton
               provider="anonymous"
-              onClick={actions.handleAnonymousLogin}
+              onClick={() => actions.handleLogin("anonymous")}
             >
               Anonymous
             </ProviderButton>
@@ -23,13 +23,13 @@ export default function LoginScreen(props) {
             </ProviderButton>
             <ProviderButton
               provider="facebook"
-              onClick={() => actions.handleOAuthLogin("facebook")}
+              onClick={() => actions.handleLogin("facebook")}
             >
               Facebook
             </ProviderButton>
             <ProviderButton
               provider="google"
-              onClick={() => actions.handleOAuthLogin("google")}
+              onClick={() => actions.handleLogin("google")}
             >
               Google
             </ProviderButton>

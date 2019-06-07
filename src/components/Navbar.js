@@ -36,7 +36,7 @@ export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
       </NavbarLeft>
       {!isLoggedIn && "ChatApp"}
       {currentRoom && currentRoom.name}
-      {currentUser ? currentUser.id : "logged out"}
+      {currentUser && !currentRoom && currentUser.id}
       <NavbarRight>
         {isLoggedIn && <Button onClick={handleLogout}>Log Out</Button>}
       </NavbarRight>
