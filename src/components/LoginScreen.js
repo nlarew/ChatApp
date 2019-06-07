@@ -6,7 +6,7 @@ import ModalCard from "./ModalCard";
 const pass = () => {};
 
 export default function LoginScreen(props) {
-  const { isLoggedIn, currentUser, actions } = useStitchAuth();
+  const { actions } = useStitchAuth();
   return (
     <Layout>
       <Content>
@@ -27,7 +27,10 @@ export default function LoginScreen(props) {
             >
               Facebook
             </ProviderButton>
-            <ProviderButton provider="google" onClick={pass}>
+            <ProviderButton
+              provider="google"
+              onClick={() => actions.handleOAuthLogin("google")}
+            >
               Google
             </ProviderButton>
           </ButtonGroup>

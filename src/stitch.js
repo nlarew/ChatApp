@@ -81,6 +81,7 @@ export async function createChatroom({ name }) {
     const result = await chatrooms.insertOne(room);
     return { ...room, _id: result.insertedId };
   } catch (err) {
+    console.error(err);
     return false;
   }
 }

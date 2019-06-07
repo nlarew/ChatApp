@@ -6,12 +6,18 @@ import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
 import { useWatchChatrooms } from "./useChatroom";
-import { logCurrentStitchUser } from "./../stitch";
 
-export default function ChatApp() {
+export default () => (
+  <StitchAuthProvider>
+    <ChatApp />
+  </StitchAuthProvider>
+);
+
+function ChatApp() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentRoom, setCurrentRoom] = useState(null);
   const [rooms, { addRoom, updateRooms }] = useWatchChatrooms();
+  const { isLoggedIn, actions, currentUser } = useStitchAuth();
   useEffect(() => {
     if (currentRoom) {
       const updatedRoom = rooms.find(
@@ -20,30 +26,26 @@ export default function ChatApp() {
       setCurrentRoom(updatedRoom || null);
     }
   }, [rooms, currentRoom]);
-  const onLogout = () =>
-    console.log("onLogout") && currentRoom && setCurrentRoom(null);
   return (
-    <StitchAuthProvider>
-      <Layout>
-        <Navbar
-          currentRoom={currentRoom}
-          unsetCurrentRoom={() => setCurrentRoom(null)}
-          addRoom={addRoom}
-        />
-        <RequireLogin
-          onLogout={onLogout}
-          updateRooms={updateRooms}
-          finishLoading={() => setIsLoading(false)}
-          isLoading={isLoading}
-        >
-          {currentRoom ? (
-            <ChatRoom room={currentRoom} />
-          ) : (
-            <RoomList rooms={rooms} setCurrentRoom={setCurrentRoom} />
-          )}
-        </RequireLogin>
-      </Layout>
-    </StitchAuthProvider>
+    <Layout>
+      <Navbar
+        currentRoom={currentRoom}
+        unsetCurrentRoom={() => setCurrentRoom(null)}
+        addRoom={addRoom}
+      />
+      <RequireLogin
+        onLogout={() => setCurrentRoom(null)}
+        updateRooms={updateRooms}
+        finishLoading={() => setIsLoading(false)}
+        isLoading={isLoading}
+      >
+        {currentRoom ? (
+          <ChatRoom room={currentRoom} />
+        ) : (
+          <RoomList rooms={rooms} setCurrentRoom={setCurrentRoom} />
+        )}
+      </RequireLogin>
+    </Layout>
   );
 }
 const Layout = styled.div`

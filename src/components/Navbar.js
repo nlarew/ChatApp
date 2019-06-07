@@ -14,8 +14,10 @@ export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
   const [Modal, isOpen, { openModal, closeModal }] = useModal("createNewRoom");
   const createRoomWithName = async name => {
     const room = await createChatroom({ name });
-    addRoom(room);
-    closeModal();
+    if (room) {
+      addRoom(room);
+      closeModal();
+    }
   };
   return (
     <Layout>
