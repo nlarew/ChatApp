@@ -44,7 +44,7 @@ export default [
         text: "Sounds great lets do it!",
       },
     ],
-    isFinished: false,
+    isArchived: false,
     isPublic: true,
   },
   {
@@ -71,7 +71,7 @@ export default [
         text: "Yeah that works for me!",
       },
     ],
-    isFinished: false,
+    isArchived: false,
     isPublic: true,
   },
 ];

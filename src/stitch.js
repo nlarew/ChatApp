@@ -47,3 +47,32 @@ const mongodb = app.getServiceClient(
 );
 
 export const chatrooms = mongodb.db("chat").collection("rooms");
+
+export function getChatrooms() {
+  return chatrooms.find({}).toArray();
+}
+
+export async function createChatroom({ name }) {
+  const currentUserId = app.auth.currentUser.id;
+  const room = {
+    name: name,
+    owner_id: currentUserId,
+    administrators: [currentUserId],
+    members: [currentUserId],
+    messages: [],
+    isArchived: false,
+    isPublic: true,
+  };
+  try {
+    const result = await chatrooms.insertOne(room);
+    return { ...room, _id: result.insertedId };
+  } catch (err) {
+    return false;
+  }
+}
+
+export function watchChatrooms(chatroom_ids) {
+  const getStream = chatrooms.watch(chatroom_ids);
+  const closeStream = () => getStream.then(stream => stream.close());
+  return [getStream, closeStream];
+}

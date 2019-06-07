@@ -9,22 +9,24 @@ export default function RoomList({
   currentRoom,
   setCurrentRoom,
 }) {
+  console.log("rooms", rooms);
   return (
     <Layout>
       <List>
-        {rooms.map(room => {
-          const roomId = room._id.toString();
-          const setAsCurrentRoom = () => setCurrentRoom(room);
-          const isCurrentRoom = currentRoom && currentRoom._id === room._id;
-          return (
-            <Room
-              key={roomId}
-              room={room}
-              onClick={setAsCurrentRoom}
-              isCurrentRoom={isCurrentRoom}
-            />
-          );
-        })}
+        {rooms.length > 0 &&
+          rooms.map(room => {
+            const roomId = room._id.toString();
+            const setAsCurrentRoom = () => setCurrentRoom(room);
+            const isCurrentRoom = currentRoom && currentRoom._id === room._id;
+            return (
+              <Room
+                key={roomId}
+                room={room}
+                onClick={setAsCurrentRoom}
+                isCurrentRoom={isCurrentRoom}
+              />
+            );
+          })}
       </List>
     </Layout>
   );

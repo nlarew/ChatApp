@@ -1,36 +1,44 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import * as R from "ramda";
 
-import { chatrooms } from "./../stitch";
+import { getChatrooms, watchChatrooms } from "./../stitch";
 
-async function getChatrooms() {
-  // Server-side filters make sure we only
-  // get rooms that the user is allowed to see.
-  return await chatrooms.find({}).asArray();
+function getRoomIds() {
+  return getChatrooms().then(R.map(room => room._id));
 }
 
-export function useChatroom(chatroom_id) {
+export function useWatchChatrooms() {
   const [isLoading, setIsLoading] = useState(true);
-  const [messages, setMessages] = useState([]);
-  const [chatroom, setChatroom] = useState({
-    _id: "",
-    owner_id: "",
-    isPublic: true,
-    isFinished: false,
-    administrators: [],
-    members: [],
-  });
+  const [roomIds, setRoomIds] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  console.log("rooms", rooms);
+  // Populate our list of room ids
+  const updateRoomIds = () => getRoomIds().then(setRoomIds);
+  useEffect(() => {
+    updateRoomIds();
+    getChatrooms().then(setRooms);
+  }, []);
   // Open a stream of new messages
   useEffect(() => {
-    const getStream = chatrooms.watch([chatroom_id]);
-    getStream.then(stream => {
-      stream.onNext(changeEvent => {
-        const { fullDocument } = changeEvent;
-        setMessages(fullDocument.messages);
+    if (roomIds.length > 0) {
+      console.log("starting stream");
+      const [getStream, closeStream] = watchChatrooms(roomIds);
+      getStream.then(stream => {
+        console.log("got stream");
+        stream.onNext(({ fullDocument: room }) => {
+          console.log("onNext fired for", room);
+          const findRoomIndex = R.findIndex(R.propEq("_id", room._id));
+          setRooms(rooms => R.adjust(findRoomIndex(rooms), () => room, rooms));
+        });
       });
-    });
-    setIsLoading(false);
-    return () => getStream.then(stream => stream.close());
-  }, []);
+      return closeStream;
+    }
+  }, [roomIds]);
 
-  return { isLoading, messages };
+  const addRoom = room => {
+    setRooms([...rooms, room]);
+    setRoomIds([...roomIds, room._id]);
+  };
+
+  return [rooms, addRoom];
 }

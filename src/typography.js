@@ -4,6 +4,7 @@ import usWebDesignStandardsTheme from "typography-theme-us-web-design-standards"
 const typography = new Typography({
   ...usWebDesignStandardsTheme,
   bodyFontFamily: ["Open Sans", "Helvetica", "sans-serif"],
+  headerFontFamily: ["Open Sans", "Helvetica", "sans-serif"],
   // headerFontFamily: [
   //   "Avenir Next",
   //   "Helvetica Neue",
