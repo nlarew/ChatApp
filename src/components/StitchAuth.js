@@ -1,9 +1,12 @@
 import React from "react";
 import {
   hasLoggedInUser,
-  loginAnonymous,
   logout,
   getCurrentUser,
+  loginAnonymous,
+  loginFacebook,
+  loginGoogle,
+  handleOAuthRedirects,
 } from "./../stitch";
 
 // Create a React Context that lets us expose and access auth state
@@ -39,6 +42,20 @@ export function StitchAuthProvider(props) {
       }));
     }
   }, [authState]);
+  const handleOAuthLogin = React.useCallback(
+    async provider => {
+      const { isLoggedIn } = authState;
+      const loginMethod = {
+        facebook: loginFacebook,
+        google: loginGoogle,
+      }[provider];
+      if (!isLoggedIn) {
+        loginMethod();
+      }
+    },
+    [authState],
+  );
+
   const handleLogout = React.useCallback(async () => {
     const { isLoggedIn } = authState;
     if (isLoggedIn) {
@@ -56,13 +73,29 @@ export function StitchAuthProvider(props) {
   // We useMemo to improve performance by eliminating some re-renders
   const authInfo = React.useMemo(() => {
     const { isLoggedIn, currentUser } = authState;
+    const handleRedirects = async () => {
+      const loggedInUser = await handleOAuthRedirects();
+      if (loggedInUser) {
+        setAuthState(authState => ({
+          ...authState,
+          isLoggedIn: true,
+          currentUser: loggedInUser,
+        }));
+      }
+    };
     const value = {
       isLoggedIn,
       currentUser,
-      actions: { handleAnonymousLogin, handleLogout },
+      actions: {
+        handleAnonymousLogin,
+        handleOAuthLogin,
+        handleRedirects,
+        handleLogout,
+      },
     };
     return value;
-  }, [authState, handleAnonymousLogin, handleLogout]);
+  }, [authState, handleAnonymousLogin, handleOAuthLogin, handleLogout]);
+
   return (
     <StitchAuthContext.Provider value={authInfo}>
       {props.children}

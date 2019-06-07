@@ -7,6 +7,7 @@ import InputModalCard from "./InputModalCard";
 
 export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
   const {
+    currentUser,
     isLoggedIn,
     actions: { handleLogout },
   } = useStitchAuth();
@@ -33,6 +34,7 @@ export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
       </NavbarLeft>
       {!isLoggedIn && "ChatApp"}
       {currentRoom && currentRoom.name}
+      {currentUser ? currentUser.id : "logged out"}
       <NavbarRight>
         {isLoggedIn && <Button onClick={handleLogout}>Log Out</Button>}
       </NavbarRight>

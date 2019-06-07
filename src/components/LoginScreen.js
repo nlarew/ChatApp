@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
+import ModalCard from "./ModalCard";
 
 const pass = () => {};
 
@@ -8,24 +9,30 @@ export default function LoginScreen(props) {
   const { isLoggedIn, currentUser, actions } = useStitchAuth();
   return (
     <Layout>
-      <ButtonGroup>
-        <span>isLoggedIn: {`${isLoggedIn}`}</span>
-        <ProviderButton
-          provider="anonymous"
-          onClick={actions.handleAnonymousLogin}
-        >
-          Anonymous
-        </ProviderButton>
-        <ProviderButton provider="userpass" onClick={pass}>
-          Email/Password
-        </ProviderButton>
-        <ProviderButton provider="facebook" onClick={pass}>
-          Facebook
-        </ProviderButton>
-        <ProviderButton provider="google" onClick={pass}>
-          Google
-        </ProviderButton>
-      </ButtonGroup>
+      <Content>
+        <ModalCard heading="Log In to Start Chatting">
+          <ButtonGroup>
+            <ProviderButton
+              provider="anonymous"
+              onClick={actions.handleAnonymousLogin}
+            >
+              Anonymous
+            </ProviderButton>
+            <ProviderButton provider="userpass" onClick={pass}>
+              Email/Password
+            </ProviderButton>
+            <ProviderButton
+              provider="facebook"
+              onClick={() => actions.handleOAuthLogin("facebook")}
+            >
+              Facebook
+            </ProviderButton>
+            <ProviderButton provider="google" onClick={pass}>
+              Google
+            </ProviderButton>
+          </ButtonGroup>
+        </ModalCard>
+      </Content>
     </Layout>
   );
 }
@@ -36,6 +43,11 @@ const Layout = styled.div`
   height: calc(100vh - 48px);
   box-sizing: border-box;
   background-color: lightgoldenrodyellow;
+  align-items: center;
+  justify-content: center;
+`;
+const Content = styled.div`
+  min-width: 400px;
 `;
 const ButtonGroup = styled.div`
   margin: auto auto;

@@ -73,7 +73,6 @@ const Message = styled.div`
 const Timestamp = props => {
   const direction = props.direction;
   const date = new Date(props.ts);
-  console.log(date);
   const MessageDate = props => {
     const formatted = format(date, "MM/DD/YYYY");
     const dateStyle = css``;

@@ -2,6 +2,7 @@ import {
   Stitch,
   AnonymousCredential,
   FacebookRedirectCredential,
+  GoogleRedirectCredential,
   RemoteMongoClient,
 } from "mongodb-stitch-browser-sdk";
 
@@ -24,18 +25,31 @@ export async function loginAnonymous() {
 export async function loginFacebook() {
   return await app.auth.loginWithRedirect(new FacebookRedirectCredential());
 }
+export async function loginGoogle() {
+  return await app.auth.loginWithRedirect(new GoogleRedirectCredential());
+}
 export function hasLoggedInUser() {
   return app.auth.isLoggedIn;
 }
 export function getCurrentUser() {
   return app.auth.isLoggedIn ? app.auth.user : null;
 }
-export function handleOAuthRedirects() {
-  if (app.auth.hasRedirectResult()) app.auth.handleRedirectResult();
+export async function handleOAuthRedirects() {
+  if (app.auth.hasRedirectResult()) {
+    console.log("hasRedirectResult");
+    const user = await app.auth.handleRedirectResult();
+    console.log("hasRedirectResult - user", user);
+  } else {
+    console.log("!hasRedirectResult");
+    return getCurrentUser();
+  }
 }
 export async function logout() {
   const { currentUser } = app.auth;
   return currentUser && (await app.auth.logoutUserWithId(currentUser.id));
+}
+export async function logCurrentStitchUser() {
+  console.log("current stitch user:", app.auth.currentUser);
 }
 
 /**

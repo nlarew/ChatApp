@@ -4,13 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useStitchAuth } from "./StitchAuth";
 import { archiveChatroom } from "./../stitch";
 
-import ROOMS from "./../stubs/rooms";
-
-export default function RoomList({
-  rooms = ROOMS,
-  currentRoom,
-  setCurrentRoom,
-}) {
+export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
   return (
     <Layout>
       <List>
@@ -45,7 +39,7 @@ const List = styled.ul`
 `;
 function Room({ room, ...props }) {
   const { currentUser } = useStitchAuth();
-  const isOwner = room.owner_id === currentUser.id;
+  const isOwner = currentUser && room.owner_id === currentUser.id;
   const handleArchive = e => {
     e.stopPropagation();
     archiveChatroom(room._id);

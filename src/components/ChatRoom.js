@@ -20,8 +20,12 @@ const formatUsername = user => {
 };
 
 export default function ChatRoom(props) {
+  console.log("currentRoom", props.room);
   const { currentUser } = useStitchAuth();
   const [messages, setMessages] = useState(props.room.messages);
+  useEffect(() => {
+    setMessages(props.room.messages);
+  }, [props.room.messages.length]);
   const [messageText, setMessageText] = useState("");
   const sendMessage = text => {
     const _id = new BSON.ObjectId();

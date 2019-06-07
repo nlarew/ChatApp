@@ -25,11 +25,12 @@ const ChatFeed = props => {
   };
   return (
     <ChatFeedLayout id="feed">
-      <Feed messages={messages}>
+      <Feed>
         {messages.map((msg, i) => {
           const isFirst = i === 0;
+          const isLast = i === messages.length - 1;
           const prev = !isFirst && messages[i - 1];
-          const next = !isFirst && messages[i - 1];
+          const next = !isLast && messages[i + 1];
           const isFirstFromUser = !isFromSameUser(prev, msg);
           const isLastFromUser = !isFromSameUser(msg, next);
           return (

@@ -3,20 +3,19 @@ import * as R from "ramda";
 
 import { getChatrooms, watchChatrooms } from "./../stitch";
 
-function getRoomIds() {
-  return getChatrooms().then(R.map(room => room._id));
-}
-
 export function useWatchChatrooms() {
-  const [isLoading, setIsLoading] = useState(true);
   const [roomIds, setRoomIds] = useState([]);
   const [rooms, setRooms] = useState([]);
   console.log("rooms", rooms);
   // Populate our list of room ids
-  const updateRoomIds = () => getRoomIds().then(setRoomIds);
+  async function updateRooms() {
+    const rooms = await getChatrooms();
+    const roomIds = rooms.map(room => room._id);
+    setRooms(rooms);
+    setRoomIds(roomIds);
+  }
   useEffect(() => {
-    updateRoomIds();
-    getChatrooms().then(setRooms);
+    updateRooms();
   }, []);
   // Open a stream of new messages
   useEffect(() => {
@@ -40,5 +39,5 @@ export function useWatchChatrooms() {
     setRoomIds([...roomIds, room._id]);
   };
 
-  return [rooms, addRoom];
+  return [rooms, { addRoom, updateRooms }];
 }

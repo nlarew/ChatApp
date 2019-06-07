@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 export default function ModalCard({ children, heading }) {
   return (
     <Card>
-      <CardHeader>{heading}</CardHeader>
+      {heading && <CardHeader>{heading}</CardHeader>}
       <CardContent>{children}</CardContent>
     </Card>
   );
