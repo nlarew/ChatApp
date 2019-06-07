@@ -76,3 +76,7 @@ export function watchChatrooms(chatroom_ids) {
   const closeStream = () => getStream.then(stream => stream.close());
   return [getStream, closeStream];
 }
+
+export function archiveChatroom(room_id) {
+  chatrooms.updateOne({ _id: room_id }, { $set: { isArchived: true } });
+}

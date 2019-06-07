@@ -4,5 +4,6 @@ import {
   faUsers,
   faComments,
   faTrashAlt,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
-library.add(faPaperPlane, faUsers, faComments, faTrashAlt);
+library.add(faPaperPlane, faUsers, faComments, faTrashAlt, faTimesCircle);

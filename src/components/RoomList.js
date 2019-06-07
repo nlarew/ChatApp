@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useStitchAuth } from "./StitchAuth";
+import { archiveChatroom } from "./../stitch";
 
 import ROOMS from "./../stubs/rooms";
 
@@ -43,23 +45,33 @@ const List = styled.ul`
   padding: 0;
 `;
 function Room({ room, ...props }) {
+  const { currentUser } = useStitchAuth();
+  const isOwner = room.owner_id === currentUser.id;
+  const handleArchive = e => {
+    e.stopPropagation();
+    archiveChatroom(room._id);
+  };
   return (
-    <RoomListItem {...props}>
+    <RoomListItem isArchived={room.isArchived} {...props}>
       <RoomName>{room.name}</RoomName>
+      {room.isArchived && "ARCHIVED"}
       <RoomData>
         {room.members.length} <MembersIcon />
       </RoomData>
       <RoomData>
         {room.messages.length} <MessagesIcon />
       </RoomData>
-      <RoomAction onClick={() => alert("hi")}>
-        <DeleteIcon />
-      </RoomAction>
+      {isOwner && !room.isArchived && (
+        <RoomAction bgcolor="#E53A40" color="white" onClick={handleArchive}>
+          <DeleteIcon />
+        </RoomAction>
+      )}
     </RoomListItem>
   );
 }
 const RoomListItem = styled.li`
   background: ${props => props.isCurrentRoom && "palegoldenrod"};
+  background: ${props => props.isArchived && "darkgrey"};
   @media (min-width: 880px) {
     background: ${props => props.isCurrentRoom && "palevioletred"};
   }
@@ -90,9 +102,9 @@ const RoomAction = styled.button`
   border: none;
   margin-left: 12px;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  background: #e53a40;
-  color: white;
+  background: ${props => props.bgcolor || "#8CD790"};
+  color: ${props => props.color || "white"};
 `;
 const MembersIcon = () => <FontAwesomeIcon icon="users" />;
 const MessagesIcon = () => <FontAwesomeIcon icon="comments" />;
-const DeleteIcon = () => <FontAwesomeIcon icon="trash-alt" />;
+const DeleteIcon = () => <FontAwesomeIcon icon="times-circle" />;
