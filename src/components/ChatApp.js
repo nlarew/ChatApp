@@ -18,13 +18,6 @@ function ChatApp() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentRoom, setCurrentRoom] = useState(null);
   const [rooms, { addRoom, updateRooms }] = useWatchChatrooms();
-  // useEffect(() => {
-  //   if (isLoading) {
-  //     handleRedirects()
-  //       .then(updateRooms)
-  //       .then(() => setIsLoading(false));
-  //   }
-  // }, [isLoading, handleRedirects, updateRooms]);
   useEffect(() => {
     if (currentRoom) {
       const updatedRoom = rooms.find(
@@ -64,9 +57,7 @@ const Layout = styled.div`
 function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
   const { isLoggedIn } = useStitchAuth();
   useEffect(() => {
-    if (!isLoading) {
-      !isLoggedIn && onLogout();
-    }
+    !isLoggedIn && onLogout();
   }, [isLoggedIn, onLogout, isLoading]);
   return isLoggedIn ? props.children : <LoginScreen />;
 }
