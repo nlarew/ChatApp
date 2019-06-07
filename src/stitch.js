@@ -78,5 +78,12 @@ export function watchChatrooms(chatroom_ids) {
 }
 
 export function archiveChatroom(room_id) {
-  chatrooms.updateOne({ _id: room_id }, { $set: { isArchived: true } });
+  return chatrooms.updateOne({ _id: room_id }, { $set: { isArchived: true } });
+}
+
+export function addMessageToRoom(message, room_id) {
+  return chatrooms.updateOne(
+    { _id: room_id },
+    { $push: { messages: message } },
+  );
 }

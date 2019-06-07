@@ -5,14 +5,14 @@ import styled from "@emotion/styled";
 import format from "date-fns/format";
 
 export default function ChatMessage(props) {
-  const { ts, from, text } = props.message;
+  const { ts, sender, text } = props.message;
   const direction = props.isFromCurrentUser ? "right" : "left";
   const { isLastFromUser, isFirstFromUser } = props;
   return (
     <Layout isLastFromUser={isLastFromUser} isFirstFromUser={isFirstFromUser}>
       {!props.noHeader && (
         <Header>
-          <Sender direction={direction}>{from.name}</Sender>
+          <Sender direction={direction}>{sender.name}</Sender>
         </Header>
       )}
       <Content>
@@ -56,10 +56,10 @@ const Sender = styled.p`
 const Message = styled.div`
   display: inline-block;
   background-color: ${props =>
-    props.direction == "left" ? "lightgrey" : "lightblue"};
+    props.direction === "left" ? "lightgrey" : "lightblue"};
   border-radius: 12px;
-  margin-left: ${props => (props.direction == "left" ? "0px" : "auto")};
-  margin-right: ${props => (props.direction == "right" ? "0px" : "auto")};
+  margin-left: ${props => (props.direction === "left" ? "0px" : "auto")};
+  margin-right: ${props => (props.direction === "right" ? "0px" : "auto")};
   border-top-left-radius: ${props =>
     props.direction === "left" ? "0px" : "12px"};
   border-top-right-radius: ${props =>

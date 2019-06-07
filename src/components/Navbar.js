@@ -17,33 +17,35 @@ export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
     closeModal();
   };
   return (
-    <NavbarLayout>
+    <Layout>
       <NavbarLeft>
         {isLoggedIn &&
           (currentRoom ? (
-            <button onClick={unsetCurrentRoom}>All Rooms</button>
+            <Button onClick={unsetCurrentRoom}>All Rooms</Button>
           ) : (
             <>
-              <button onClick={() => openModal()}>Create a New Room</button>
+              <Button onClick={() => openModal()}>Create a New Room</Button>
               <Modal isOpen={isOpen}>
                 <InputModalCard handleSubmit={createRoomWithName} />
               </Modal>
             </>
           ))}
       </NavbarLeft>
+      {!isLoggedIn && "ChatApp"}
       {currentRoom && currentRoom.name}
       <NavbarRight>
-        {isLoggedIn && <button onClick={handleLogout}>Log Out</button>}
+        {isLoggedIn && <Button onClick={handleLogout}>Log Out</Button>}
       </NavbarRight>
-    </NavbarLayout>
+    </Layout>
   );
 }
-const NavbarLayout = styled.div`
+const Layout = styled.div`
   width: 100%;
   height: 48px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid black;
+  padding: 0 14px;
 `;
 const NavbarLeft = styled.div`
   width: 25%;
@@ -58,4 +60,14 @@ const NavbarRight = styled.div`
   margin-left: auto;
   display: flex;
   justify-content: flex-end;
+`;
+const Button = styled.button`
+  padding: 8px 10px;
+  border-radius: 4px;
+  line-height: 16px;
+  font-size: 16px;
+  text-align: right;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: grey;
+  color: ${props => props.color || "white"};
 `;

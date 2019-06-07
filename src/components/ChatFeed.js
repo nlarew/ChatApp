@@ -3,18 +3,12 @@ import React, { useRef, useState, useEffect } from "react";
 import { css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
 import ChatMessage from "./ChatMessage.js";
+import { useStitchAuth } from "./StitchAuth";
 import { animateScroll as scroll } from "react-scroll";
-
-const USER = {
-  id: "20391029481029849124",
-  profile: {
-    firstName: "Jessica",
-    lastName: "Real",
-  },
-};
 
 const ChatFeed = props => {
   const { messages } = props;
+  const { currentUser } = useStitchAuth();
   useEffect(() => {
     scroll.scrollToBottom({
       containerId: "feed",
@@ -23,11 +17,11 @@ const ChatFeed = props => {
     });
   }, [messages]);
   const isFromCurrentUser = message => {
-    return !!message && message.from.id === USER.id;
+    return !!message && message.sender.id === currentUser.id;
   };
   const isFromSameUser = (prevMessage, thisMessage) => {
     if (!prevMessage || !thisMessage) return false;
-    return prevMessage.from.id === thisMessage.from.id;
+    return prevMessage.sender.id === thisMessage.sender.id;
   };
   return (
     <ChatFeedLayout id="feed">

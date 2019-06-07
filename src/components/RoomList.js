@@ -11,7 +11,6 @@ export default function RoomList({
   currentRoom,
   setCurrentRoom,
 }) {
-  console.log("rooms", rooms);
   return (
     <Layout>
       <List>
