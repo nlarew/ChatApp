@@ -17,6 +17,7 @@
     "react-dom": "16.8.6",
     "react-hanger": "2.0.0",
     "react-helmet": "5.2.1",
+    "react-loader-spinner": "2.3.0",
     "react-modal": "3.8.1",
     "react-scripts": "2.1.8",
     "react-scroll": "1.7.11",

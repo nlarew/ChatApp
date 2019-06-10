@@ -1,39 +1,63 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
 import ModalCard from "./ModalCard";
+import Loader from "react-loader-spinner";
 
 const pass = () => {};
 
 export default function LoginScreen(props) {
   const { actions } = useStitchAuth();
+  const [isHandlingLogin, setIsHandlingLogin] = React.useState(false);
+  useEffect(
+    () => () => {
+      setIsHandlingLogin(false);
+    },
+    [],
+  );
+  const handleLogin = provider => {
+    setIsHandlingLogin(true);
+    actions.handleLogin(provider);
+  };
   return (
     <Layout>
       <Content>
         <ModalCard heading="Log In to Start Chatting">
-          <ButtonGroup>
-            <ProviderButton
-              provider="anonymous"
-              onClick={() => actions.handleLogin("anonymous")}
-            >
-              Anonymous
-            </ProviderButton>
-            <ProviderButton provider="userpass" onClick={pass}>
-              Email/Password
-            </ProviderButton>
-            <ProviderButton
-              provider="facebook"
-              onClick={() => actions.handleLogin("facebook")}
-            >
-              Facebook
-            </ProviderButton>
-            <ProviderButton
-              provider="google"
-              onClick={() => actions.handleLogin("google")}
-            >
-              Google
-            </ProviderButton>
-          </ButtonGroup>
+          {isHandlingLogin ? (
+            <span>
+              Logging in
+              <Loader
+                type="MutatingDot"
+                color="#00BFFF"
+                height="100"
+                width="100"
+              />
+            </span>
+          ) : (
+            <ButtonGroup>
+              <ProviderButton
+                provider="anonymous"
+                onClick={() => handleLogin("anonymous")}
+              >
+                Anonymous
+              </ProviderButton>
+              <ProviderButton provider="userpass" onClick={pass}>
+                Email/Password
+              </ProviderButton>
+              <ProviderButton
+                provider="facebook"
+                onClick={() => handleLogin("facebook")}
+              >
+                Facebook
+              </ProviderButton>
+              <ProviderButton
+                provider="google"
+                onClick={() => handleLogin("google")}
+              >
+                Google
+              </ProviderButton>
+            </ButtonGroup>
+          )}
         </ModalCard>
       </Content>
     </Layout>
@@ -60,11 +84,12 @@ const ButtonGroup = styled.div`
 const ProviderButton = styled.button`
   background: ${({provider}) => {
     switch (provider) {
-      case "anonymous": return "grey"
+      case "anonymous": return "orange"
       case "userpass":  return "rebeccapurple"
       case "facebook":  return "#1976F2"
       case "google":    return "#D04332"
       default: {}
     }
   }};
+  background: ${({disabled}) => disabled && "lightgrey"};
 `;

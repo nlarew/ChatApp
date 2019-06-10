@@ -24,7 +24,7 @@ export function getAllUsers() {
 }
 export async function loginAnonymous() {
   console.log("logging in with anonymous");
-  return await app.auth.loginWithCredential(new AnonymousCredential());
+  return app.auth.loginWithCredential(new AnonymousCredential());
 }
 export async function loginFacebook() {
   console.log("logging in with facebook");
@@ -52,7 +52,7 @@ export const handleOAuthRedirects = async () => {
 };
 export async function logout() {
   const { user } = app.auth;
-  return user && (await app.auth.logoutUserWithId(user.id));
+  return user && app.auth.logoutUserWithId(user.id);
 }
 export function addAuthenticationListener(listener) {
   console.log("adding auth listener", listener);
