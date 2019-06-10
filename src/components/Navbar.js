@@ -31,6 +31,7 @@ export default function Navbar({
     }
   };
   const addUsertoSearchedRoom = async room => {
+    console.log("currentUser", isLoggedIn, currentUser);
     const result = await addUserToRoom(currentUser.id, room._id);
     console.log("result", result);
     if (result) {

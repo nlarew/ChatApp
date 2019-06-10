@@ -11,7 +11,7 @@ export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
     <Layout>
       <List>
         {rooms.length > 0 &&
-          rooms.filter(userIsInRoom).map(room => {
+          rooms.filter(userIsInRoom).map((room, i) => {
             const roomId = room._id.toString();
             const setAsCurrentRoom = () => {
               console.log(room.members, currentUser.id);
@@ -20,7 +20,7 @@ export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
             const isCurrentRoom = currentRoom && currentRoom._id === room._id;
             return (
               <Room
-                key={roomId}
+                key={roomId + i}
                 room={room}
                 onClick={setAsCurrentRoom}
                 isCurrentRoom={isCurrentRoom}
@@ -36,11 +36,22 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 48px);
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    width: 5px;
+    &-track {
+      background: #ddd;
+    }
+    &-thumb {
+      background: #666;
+    }
+  }
 `;
 const List = styled.ul`
   list-style: none;
   padding: 0;
+  flex-grow: 1;
 `;
 export function Room({ room, ...props }) {
   const { currentUser } = useStitchAuth();

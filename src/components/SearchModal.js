@@ -139,12 +139,12 @@ const ResultsList = styled.ul`
   box-sizing: border-box;
   ::-webkit-scrollbar {
     width: 5px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #ddd;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #666;
+    &-track {
+      background: #ddd;
+    }
+    &-thumb {
+      background: #666;
+    }
   }
 `;
 const ResultItem = styled.li`

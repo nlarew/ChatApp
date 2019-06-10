@@ -58,14 +58,12 @@ const ChatFeedLayout = styled.div`
   background: ${props => (props.isArchived ? "lightgrey" : "white")};
   ::-webkit-scrollbar {
     width: 5px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #ddd;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #666;
+    &-track {
+      background: #ddd;
+    }
+    &-thumb {
+      background: #666;
+    }
   }
 `;
 const Feed = styled.div`
