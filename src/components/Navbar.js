@@ -31,9 +31,7 @@ export default function Navbar({
     }
   };
   const addUsertoSearchedRoom = async room => {
-    console.log("currentUser", isLoggedIn, currentUser);
     const result = await addUserToRoom(currentUser.id, room._id);
-    console.log("result", result);
     if (result) {
       addRoom(result);
     }
@@ -51,6 +49,23 @@ export default function Navbar({
     },
     [rooms, currentUser],
   );
+  const NavTitle = () => {
+    if (isLoggedIn) {
+      if (currentRoom) {
+        const { isArchived, name } = currentRoom;
+        const text = isArchived ? `${name} - ARCHIVED` : name;
+        return text;
+      } else {
+        return (
+          <Button onClick={searchModalActions.open}>
+            Search for Chatrooms
+          </Button>
+        );
+      }
+    } else {
+      return "ChatApp";
+    }
+  };
   return (
     <Layout>
       <NavbarLeft>
@@ -63,13 +78,7 @@ export default function Navbar({
             </Button>
           ))}
       </NavbarLeft>
-      {!isLoggedIn ? (
-        "ChatApp"
-      ) : currentRoom ? (
-        currentRoom.name
-      ) : (
-        <Button onClick={searchModalActions.open}>Search for Chatrooms</Button>
-      )}
+      <NavTitle />
       <NavbarRight>
         {isLoggedIn && <Button onClick={handleLogout}>Log Out</Button>}
       </NavbarRight>
