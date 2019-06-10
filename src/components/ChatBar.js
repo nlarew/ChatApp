@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ChatBar(props) {
   const { sendMessage, setMessageText, messageText } = props;
+  const shouldAllowMessageSends = messageText.length > 0 && !props.isArchived;
   const handleMessageSend = () => {
-    if (messageText) {
+    if (shouldAllowMessageSends) {
       sendMessage(messageText);
       setMessageText("");
     }
@@ -28,7 +29,7 @@ export default function ChatBar(props) {
         onKeyDown={handleKeyPress}
       />
       <SendButton
-        disabled={messageText.length === 0}
+        disabled={!shouldAllowMessageSends}
         onClick={handleMessageSend}
       />
     </Layout>

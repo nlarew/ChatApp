@@ -20,7 +20,7 @@ const formatUsername = user => {
 };
 
 export default function ChatRoom(props) {
-  console.log("currentRoom", props.room);
+  const { isArchived } = props.room;
   const { currentUser } = useStitchAuth();
   const [messages, setMessages] = useState(props.room.messages);
   useEffect(() => {
@@ -41,11 +41,12 @@ export default function ChatRoom(props) {
 
   return (
     <Layout>
-      <ChatFeed messages={messages} />
+      <ChatFeed isArchived={isArchived} messages={messages} />
       <ChatBar
         sendMessage={sendMessage}
         setMessageText={setMessageText}
         messageText={messageText}
+        isArchived={isArchived}
       />
     </Layout>
   );

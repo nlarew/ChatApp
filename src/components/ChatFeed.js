@@ -24,7 +24,7 @@ const ChatFeed = props => {
     return prevMessage.sender.id === thisMessage.sender.id;
   };
   return (
-    <ChatFeedLayout id="feed">
+    <ChatFeedLayout id="feed" isArchived={props.isArchived}>
       <Feed>
         {messages.map((msg, i) => {
           const isFirst = i === 0;
@@ -55,6 +55,18 @@ const ChatFeedLayout = styled.div`
   flex-grow: 1;
   box-sizing: border-box;
   overflow-y: scroll;
+  background: ${props => (props.isArchived ? "lightgrey" : "white")};
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #ddd;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #666;
+  }
 `;
 const Feed = styled.div`
   width: 100%;

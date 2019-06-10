@@ -34,7 +34,6 @@ const Layout = styled.div`
   margin: 6px 12px;
   margin-top: ${props => (props.isFirstFromUser ? "6px" : "1px")};
   margin-bottom: ${props => (props.isLastFromUser ? "6px" : "1px")};
-  background-color: white;
   display: flex;
   flex-direction: column;
 `;

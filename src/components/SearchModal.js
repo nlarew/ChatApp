@@ -140,11 +140,9 @@ const ResultsList = styled.ul`
   ::-webkit-scrollbar {
     width: 5px;
   }
-
   ::-webkit-scrollbar-track {
     background: #ddd;
   }
-
   ::-webkit-scrollbar-thumb {
     background: #666;
   }
