@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useStitchAuth } from "./StitchAuth";
-import { archiveChatroom } from "./../stitch";
+import { archiveChatroom, removeUserFromRoom } from "./../stitch";
 
 export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
+  const { currentUser } = useStitchAuth();
+  const userIsInRoom = room => room.members.includes(currentUser.id);
   return (
     <Layout>
       <List>
         {rooms.length > 0 &&
-          rooms.map(room => {
+          rooms.filter(userIsInRoom).map(room => {
             const roomId = room._id.toString();
-            const setAsCurrentRoom = () => setCurrentRoom(room);
+            const setAsCurrentRoom = () => {
+              console.log(room.members, currentUser.id);
+              setCurrentRoom(room);
+            };
             const isCurrentRoom = currentRoom && currentRoom._id === room._id;
             return (
               <Room
@@ -37,38 +42,37 @@ const List = styled.ul`
   list-style: none;
   padding: 0;
 `;
-export const Room = React.memo(({ room, ...props }) => {
+export function Room({ room, ...props }) {
   const { currentUser } = useStitchAuth();
   const isOwner = currentUser && room.owner_id === currentUser.id;
-  const isMember =
-    currentUser && room.members.some(m => m.id === currentUser.id);
+  const isMember = currentUser && room.members.includes(currentUser.id);
+  const handleLeave = e => {
+    e.stopPropagation();
+    removeUserFromRoom(currentUser.id, room._id);
+  };
   const handleArchive = e => {
     e.stopPropagation();
     archiveChatroom(room._id);
   };
   return (
     <RoomListItem isArchived={room.isArchived} {...props}>
-      <RoomName>{room.name}</RoomName>
-      {room.isArchived && "ARCHIVED"}
       <NumMembers num={room.members.length} />
       <NumMessages num={room.messages.length} />
+      <RoomName>{room.name}</RoomName>
+      {room.isArchived && "ARCHIVED"}
       {isOwner && !room.isArchived && (
         <RoomAction bgcolor="#E53A40" color="white" onClick={handleArchive}>
           <DeleteIcon />
         </RoomAction>
       )}
       {isMember && (
-        <RoomAction
-          bgcolor="#E53A40"
-          color="white"
-          onClick={() => alert(`leaving room ${room.name}`)}
-        >
+        <RoomAction bgcolor="#E0E3DA" color="black" onClick={handleLeave}>
           <LeaveIcon />
         </RoomAction>
       )}
     </RoomListItem>
   );
-});
+}
 const RoomListItem = styled.li`
   background: ${props => props.isCurrentRoom && "palegoldenrod"};
   background: ${props => props.isArchived && "darkgrey"};
@@ -78,6 +82,7 @@ const RoomListItem = styled.li`
   align-items: center;
 `;
 const RoomName = styled.span`
+  padding-left: 4px;
   margin-right: auto;
 `;
 const RoomData = styled.div`
@@ -87,7 +92,8 @@ const RoomData = styled.div`
   font-size: 16px;
   text-align: right;
   border: none;
-  margin-left: 12px;
+
+  margin-right: 12px;
   color: ${props => (props.disabled ? "darkgray" : "black")};
 `;
 const RoomAction = styled.button`

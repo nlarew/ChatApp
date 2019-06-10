@@ -24,9 +24,18 @@ export function useWatchChatrooms() {
     if (roomIds.length > 0) {
       const [getStream, closeStream] = watchChatrooms(roomIds);
       getStream.then(stream => {
-        stream.onNext(({ fullDocument: room }) => {
-          const findRoomIndex = R.findIndex(R.propEq("_id", room._id));
-          setRooms(rooms => R.adjust(findRoomIndex(rooms), () => room, rooms));
+        stream.onNext(({ fullDocument: room, updateDescription }) => {
+          const membersChanged =
+            updateDescription.updatedFields &&
+            Object.keys(updateDescription.updatedFields).includes("members");
+          if (membersChanged) {
+            updateRooms();
+          } else {
+            const findRoomIndex = R.findIndex(R.propEq("_id", room._id));
+            setRooms(rooms =>
+              R.adjust(findRoomIndex(rooms), () => room, rooms),
+            );
+          }
         });
       });
       return closeStream;

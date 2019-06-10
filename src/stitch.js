@@ -79,7 +79,7 @@ export async function searchForChatrooms(searchText) {
   const rooms = await chatrooms
     .find({
       isPublic: true,
-      // name: searchRegex,
+      name: searchRegex,
     })
     .toArray();
   console.log("got rooms", rooms);
@@ -88,7 +88,9 @@ export async function searchForChatrooms(searchText) {
 
 export function getChatroomsUserIsIn() {
   if (app.auth.currentUser) {
-    return chatrooms.find({ members: app.auth.currentUser.id }).toArray();
+    return chatrooms
+      .find({ members: app.auth.currentUser.id }, { sort: { isArchived: 1 } })
+      .toArray();
   } else {
     return [];
   }
@@ -99,6 +101,15 @@ export async function addUserToRoom(user_id, room_id) {
   const result = await chatrooms.findOneAndUpdate(
     { _id: room_id },
     { $addToSet: { members: user_id } },
+    { returnNewDocument: true },
+  );
+  return result;
+}
+export async function removeUserFromRoom(user_id, room_id) {
+  console.log(`removing user(${user_id}) from room(${room_id})`);
+  const result = await chatrooms.findOneAndUpdate(
+    { _id: room_id },
+    { $pullAll: { members: [user_id] } },
     { returnNewDocument: true },
   );
   return result;

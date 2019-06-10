@@ -5,8 +5,6 @@ import { useInput } from "react-hanger";
 import { Modal } from "./useModal";
 import { NumMembers, NumMessages } from "./RoomList";
 import useDebounce from "./useDebounce";
-import { getCurrentUser } from "../stitch";
-import { useStitchAuth } from "./StitchAuth";
 
 function useSearch(searchTerm, handleSearch) {
   const [searchedTerm, setSearchedTerm] = useState("");
@@ -15,7 +13,7 @@ function useSearch(searchTerm, handleSearch) {
   useEffect(() => {
     if (debouncedSearchTerm) {
       let didCancel = false;
-      // setSearchedTerm(debouncedSearchTerm);
+      setSearchedTerm(debouncedSearchTerm);
       const handleSearchResults = results =>
         !didCancel && setSearchResults(results);
       if (debouncedSearchTerm) {
@@ -39,6 +37,15 @@ export default React.memo(function SearchModal({
   ...props
 }) {
   const searchInput = useInput("");
+  const inputRef = React.useRef();
+  const focusInput = () => {
+    if (props.isOpen) {
+      inputRef.current && inputRef.current.focus();
+    }
+  };
+  useEffect(focusInput);
+
+  // React.useEffect(focusInput);
   const [searchResults, searchTerm, clearSearchResults] = useSearch(
     searchInput.value,
     handleSearch,
@@ -60,7 +67,11 @@ export default React.memo(function SearchModal({
   return (
     <Modal {...props}>
       <ModalCard heading="Search for Rooms">
-        <SearchInput placeholder="Room Name" searchInput={searchInput} />
+        <SearchInput
+          ref={inputRef}
+          placeholder="Room Name"
+          searchInput={searchInput}
+        />
         <SearchResults
           searchTerm={searchTerm}
           handleSearchResult={handleSearchResult}
@@ -70,15 +81,19 @@ export default React.memo(function SearchModal({
     </Modal>
   );
 });
-const SearchInput = function({ placeholder, searchInput }) {
+const SearchInput = React.forwardRef(function(
+  { placeholder, searchInput },
+  inputRef,
+) {
   return (
     <Input
+      ref={ref => (inputRef.current = ref)}
       placeholder={placeholder}
       value={searchInput.value}
       onChange={searchInput.onChange}
     />
   );
-};
+});
 const Input = styled.input`
   width: 100%;
   padding: 10px;

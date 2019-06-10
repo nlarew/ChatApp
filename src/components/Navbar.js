@@ -38,16 +38,17 @@ export default function Navbar({
     }
   };
   const handleSearch = React.useCallback(searchForChatrooms, []);
-  const handleSearchResult = React.useCallback(addUsertoSearchedRoom, []);
+  const handleSearchResult = React.useCallback(addUsertoSearchedRoom, [rooms]);
   const filterSearchedRooms = React.useCallback(
     searchedRooms => {
-      const userRoomIds = rooms.map(r => r._id);
+      const userIsInRoom = room => room.members.includes(currentUser.id);
+      const userRoomIds = rooms.filter(userIsInRoom).map(r => r._id.toString());
       const joinableRooms = searchedRooms.filter(
-        searchedRoom => !userRoomIds.includes(searchedRoom._id),
+        searchedRoom => !userRoomIds.includes(searchedRoom._id.toString()),
       );
       return joinableRooms;
     },
-    [rooms],
+    [rooms, currentUser],
   );
   return (
     <Layout>

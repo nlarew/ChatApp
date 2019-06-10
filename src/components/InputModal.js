@@ -5,10 +5,18 @@ import { useInput } from "react-hanger";
 import { Modal } from "./useModal";
 
 export default function InputModal({ handleSubmit, ...props }) {
+  const inputRef = React.useRef();
+  const focusInput = () => {
+    if (props.isOpen) {
+      inputRef.current && inputRef.current.focus();
+    }
+  };
   return (
     <Modal {...props}>
       <ModalCard heading="Create a New Room">
         <ActionInput
+          ref={inputRef}
+          focusInput={focusInput}
           placeholder="Room Name"
           handleSubmit={handleSubmit}
           actionText="Create"
@@ -17,11 +25,16 @@ export default function InputModal({ handleSubmit, ...props }) {
     </Modal>
   );
 }
-const ActionInput = function({ placeholder, actionText, handleSubmit }) {
+const ActionInput = React.forwardRef(function(
+  { placeholder, actionText, handleSubmit, focusInput },
+  inputRef,
+) {
   const input = useInput("");
+  React.useEffect(focusInput);
   return (
     <ActionInputLayout>
       <Input
+        ref={ref => (inputRef.current = ref)}
         placeholder={placeholder}
         value={input.value}
         onChange={input.onChange}
@@ -29,7 +42,7 @@ const ActionInput = function({ placeholder, actionText, handleSubmit }) {
       <button onClick={() => handleSubmit(input.value)}>{actionText}</button>
     </ActionInputLayout>
   );
-};
+});
 const ActionInputLayout = styled.div`
   width: 100%;
   display: flex;
