@@ -1,24 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
 import useModal from "./useModal";
-import { createChatroom } from "./../stitch";
-import InputModalCard from "./InputModalCard";
+import { createChatroom, searchForChatrooms, addUserToRoom } from "./../stitch";
+import InputModal from "./InputModal";
+import SearchModal from "./SearchModal";
 
-export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
+export default function Navbar({
+  rooms,
+  currentRoom,
+  unsetCurrentRoom,
+  addRoom,
+}) {
   const {
     currentUser,
     isLoggedIn,
     actions: { handleLogout },
   } = useStitchAuth();
-  const [Modal, isOpen, { openModal, closeModal }] = useModal("createNewRoom");
+  const [newRoomModalProps, newRoomModalIsOpen, newRoomModalActions] = useModal(
+    "createNewRoom",
+  );
+  const [searchModalProps, searchModalIsOpen, searchModalActions] = useModal(
+    "search",
+  );
   const createRoomWithName = async name => {
     const room = await createChatroom({ name });
     if (room) {
       addRoom(room);
-      closeModal();
+      newRoomModalActions.close();
     }
   };
+  const addUsertoSearchedRoom = async room => {
+    const result = await addUserToRoom(currentUser.id, room._id);
+    console.log("result", result);
+    if (result) {
+      addRoom(result);
+    }
+  };
+  const handleSearch = React.useCallback(searchForChatrooms, []);
+  const handleSearchResult = React.useCallback(addUsertoSearchedRoom, []);
+  const filterSearchedRooms = React.useCallback(
+    searchedRooms => {
+      const userRoomIds = rooms.map(r => r._id);
+      const joinableRooms = searchedRooms.filter(
+        searchedRoom => !userRoomIds.includes(searchedRoom._id),
+      );
+      return joinableRooms;
+    },
+    [rooms],
+  );
   return (
     <Layout>
       <NavbarLeft>
@@ -26,20 +56,33 @@ export default function Navbar({ currentRoom, unsetCurrentRoom, addRoom }) {
           (currentRoom ? (
             <Button onClick={unsetCurrentRoom}>All Rooms</Button>
           ) : (
-            <>
-              <Button onClick={() => openModal()}>Create a New Room</Button>
-              <Modal isOpen={isOpen}>
-                <InputModalCard handleSubmit={createRoomWithName} />
-              </Modal>
-            </>
+            <Button onClick={newRoomModalActions.open}>
+              Create a New Room
+            </Button>
           ))}
       </NavbarLeft>
-      {!isLoggedIn && "ChatApp"}
-      {currentRoom && currentRoom.name}
-      {currentUser && !currentRoom && currentUser.id}
+      {!isLoggedIn ? (
+        "ChatApp"
+      ) : currentRoom ? (
+        currentRoom.name
+      ) : (
+        <Button onClick={searchModalActions.open}>Search for Chatrooms</Button>
+      )}
       <NavbarRight>
         {isLoggedIn && <Button onClick={handleLogout}>Log Out</Button>}
       </NavbarRight>
+      <InputModal
+        {...newRoomModalProps}
+        isOpen={newRoomModalIsOpen}
+        handleSubmit={createRoomWithName}
+      />
+      <SearchModal
+        {...searchModalProps}
+        isOpen={searchModalIsOpen}
+        handleSearch={handleSearch}
+        searchFilter={filterSearchedRooms}
+        handleSearchResult={handleSearchResult}
+      />
     </Layout>
   );
 }

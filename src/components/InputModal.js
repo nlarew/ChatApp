@@ -2,19 +2,21 @@ import React from "react";
 import styled from "@emotion/styled";
 import ModalCard from "./ModalCard";
 import { useInput } from "react-hanger";
+import { Modal } from "./useModal";
 
-export default function InputModalCard({ handleSubmit }) {
+export default function InputModal({ handleSubmit, ...props }) {
   return (
-    <ModalCard heading="Create a New Room">
-      <ActionInput
-        placeholder="Room Name"
-        handleSubmit={handleSubmit}
-        actionText="Create"
-      />
-    </ModalCard>
+    <Modal {...props}>
+      <ModalCard heading="Create a New Room">
+        <ActionInput
+          placeholder="Room Name"
+          handleSubmit={handleSubmit}
+          actionText="Create"
+        />
+      </ModalCard>
+    </Modal>
   );
 }
-
 const ActionInput = function({ placeholder, actionText, handleSubmit }) {
   const input = useInput("");
   return (
@@ -29,7 +31,7 @@ const ActionInput = function({ placeholder, actionText, handleSubmit }) {
   );
 };
 const ActionInputLayout = styled.div`
-  width: 80%;
+  width: 100%;
   display: flex;
   margin-bottom: 26px;
 `;

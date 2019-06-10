@@ -1,0 +1,153 @@
+import React, { useState, useEffect } from "react";
+import styled from "@emotion/styled";
+import ModalCard from "./ModalCard";
+import { useInput } from "react-hanger";
+import { Modal } from "./useModal";
+import { NumMembers, NumMessages } from "./RoomList";
+import useDebounce from "./useDebounce";
+import { getCurrentUser } from "../stitch";
+import { useStitchAuth } from "./StitchAuth";
+
+function useSearch(searchTerm, handleSearch) {
+  const [searchedTerm, setSearchedTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      let didCancel = false;
+      // setSearchedTerm(debouncedSearchTerm);
+      const handleSearchResults = results =>
+        !didCancel && setSearchResults(results);
+      if (debouncedSearchTerm) {
+        handleSearch(debouncedSearchTerm).then(handleSearchResults);
+      }
+      return () => {
+        didCancel = true;
+      };
+    }
+  }, [handleSearch, debouncedSearchTerm]);
+
+  const clearSearchResults = () => setSearchResults([]);
+
+  return [searchResults, searchedTerm, clearSearchResults];
+}
+
+export default React.memo(function SearchModal({
+  handleSearch,
+  searchFilter,
+  handleSearchResult,
+  ...props
+}) {
+  const searchInput = useInput("");
+  const [searchResults, searchTerm, clearSearchResults] = useSearch(
+    searchInput.value,
+    handleSearch,
+  );
+  const [filteredResults, setFilteredResults] = useState([]);
+  useEffect(() => {
+    if (searchFilter && searchResults.length) {
+      setFilteredResults(searchFilter(searchResults));
+    } else {
+      setFilteredResults(searchResults);
+    }
+  }, [searchFilter, searchResults]);
+  useEffect(() => {
+    if (!props.isOpen) {
+      searchInput.clear();
+      clearSearchResults();
+    }
+  }, [props.isOpen, searchInput, clearSearchResults]);
+  return (
+    <Modal {...props}>
+      <ModalCard heading="Search for Rooms">
+        <SearchInput placeholder="Room Name" searchInput={searchInput} />
+        <SearchResults
+          searchTerm={searchTerm}
+          handleSearchResult={handleSearchResult}
+          results={filteredResults}
+        />
+      </ModalCard>
+    </Modal>
+  );
+});
+const SearchInput = function({ placeholder, searchInput }) {
+  return (
+    <Input
+      placeholder={placeholder}
+      value={searchInput.value}
+      onChange={searchInput.onChange}
+    />
+  );
+};
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+`;
+function SearchResults({ results, handleSearchResult, searchTerm }) {
+  return (
+    results.length > 0 && (
+      <>
+        <ResultsHeading>Results for "{searchTerm}"</ResultsHeading>
+        <ResultsList>
+          {results.map(result => {
+            return (
+              <ResultItem
+                key={result._id}
+                onClick={() => handleSearchResult(result)}
+              >
+                <ResultName>{result.name}</ResultName>
+                <ResultDetails>
+                  <NumMembers num={result.members.length} />
+                  <NumMessages num={result.messages.length} />
+                </ResultDetails>
+              </ResultItem>
+            );
+          })}
+        </ResultsList>
+      </>
+    )
+  );
+}
+const ResultsHeading = styled.h2`
+  margin-top: 26px;
+  margin-bottom: 8px;
+  margin-right: auto;
+`;
+const ResultsList = styled.ul`
+  width: 100%;
+  text-align: left;
+  list-style: none;
+  max-height: 200px;
+  overflow-y: scroll;
+  /* border: 0.5px solid black; */
+  box-shadow: 0 0 0 1px #000;
+  box-sizing: border-box;
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #ddd;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #666;
+  }
+`;
+const ResultItem = styled.li`
+  border-top: 0.5px solid black;
+  :first-of-type {
+    border-top: none;
+  }
+  :hover {
+    background: lightgrey;
+  }
+  font-size: 22px;
+  line-height: 64px;
+  padding: 4px 12px;
+  display: flex;
+`;
+const ResultName = styled.span`
+  flex-grow: 1;
+`;
+const ResultDetails = styled.div``;

@@ -31,6 +31,7 @@ export function StitchAuthProvider(props) {
   });
 
   const setLoggedInUserState = loggedInUser => {
+    console.log("loggedInUser", loggedInUser);
     setAuthState(authState => ({
       ...authState,
       isLoggedIn: true,

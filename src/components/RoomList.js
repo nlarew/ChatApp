@@ -37,9 +37,11 @@ const List = styled.ul`
   list-style: none;
   padding: 0;
 `;
-function Room({ room, ...props }) {
+export const Room = React.memo(({ room, ...props }) => {
   const { currentUser } = useStitchAuth();
   const isOwner = currentUser && room.owner_id === currentUser.id;
+  const isMember =
+    currentUser && room.members.some(m => m.id === currentUser.id);
   const handleArchive = e => {
     e.stopPropagation();
     archiveChatroom(room._id);
@@ -48,26 +50,28 @@ function Room({ room, ...props }) {
     <RoomListItem isArchived={room.isArchived} {...props}>
       <RoomName>{room.name}</RoomName>
       {room.isArchived && "ARCHIVED"}
-      <RoomData>
-        {room.members.length} <MembersIcon />
-      </RoomData>
-      <RoomData>
-        {room.messages.length} <MessagesIcon />
-      </RoomData>
+      <NumMembers num={room.members.length} />
+      <NumMessages num={room.messages.length} />
       {isOwner && !room.isArchived && (
         <RoomAction bgcolor="#E53A40" color="white" onClick={handleArchive}>
           <DeleteIcon />
         </RoomAction>
       )}
+      {isMember && (
+        <RoomAction
+          bgcolor="#E53A40"
+          color="white"
+          onClick={() => alert(`leaving room ${room.name}`)}
+        >
+          <LeaveIcon />
+        </RoomAction>
+      )}
     </RoomListItem>
   );
-}
+});
 const RoomListItem = styled.li`
   background: ${props => props.isCurrentRoom && "palegoldenrod"};
   background: ${props => props.isArchived && "darkgrey"};
-  @media (min-width: 880px) {
-    background: ${props => props.isCurrentRoom && "palevioletred"};
-  }
   padding: 14px;
   border-bottom: 0.5px solid black;
   display: flex;
@@ -101,3 +105,14 @@ const RoomAction = styled.button`
 const MembersIcon = () => <FontAwesomeIcon icon="users" />;
 const MessagesIcon = () => <FontAwesomeIcon icon="comments" />;
 const DeleteIcon = () => <FontAwesomeIcon icon="times-circle" />;
+const LeaveIcon = () => <FontAwesomeIcon icon="sign-out-alt" />;
+export const NumMembers = ({ num }) => (
+  <RoomData>
+    {num} <MembersIcon />
+  </RoomData>
+);
+export const NumMessages = ({ num }) => (
+  <RoomData>
+    {num} <MessagesIcon />
+  </RoomData>
+);

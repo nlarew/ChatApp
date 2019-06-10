@@ -1,4 +1,5 @@
 import {
+  BSON,
   Stitch,
   AnonymousCredential,
   FacebookRedirectCredential,
@@ -72,14 +73,17 @@ export function getChatrooms() {
   return chatrooms.find({}).toArray();
 }
 
-export function searchForChatrooms(searchText) {
-  return chatrooms
+export async function searchForChatrooms(searchText) {
+  const searchRegex = new BSON.BSONRegExp(`${searchText}`);
+  console.log(searchRegex);
+  const rooms = await chatrooms
     .find({
-      public: true,
-      members: { $nin: [app.auth.currentUser.id] },
-      name: { $regex: searchText },
+      isPublic: true,
+      // name: searchRegex,
     })
     .toArray();
+  console.log("got rooms", rooms);
+  return rooms;
 }
 
 export function getChatroomsUserIsIn() {
@@ -88,6 +92,16 @@ export function getChatroomsUserIsIn() {
   } else {
     return [];
   }
+}
+
+export async function addUserToRoom(user_id, room_id) {
+  console.log(`adding user(${user_id}) to room(${room_id})`);
+  const result = await chatrooms.findOneAndUpdate(
+    { _id: room_id },
+    { $addToSet: { members: user_id } },
+    { returnNewDocument: true },
+  );
+  return result;
 }
 
 export async function createChatroom({ name }) {
