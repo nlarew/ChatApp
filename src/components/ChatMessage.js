@@ -12,8 +12,7 @@ export default function ChatMessage(props) {
     <Layout isLastFromUser={isLastFromUser} isFirstFromUser={isFirstFromUser}>
       {!props.noHeader && (
         <Header>
-          <Sender direction={direction}>{sender.name}</Sender>
-          {sender.picture && <SenderPicture alt="hi" src={sender.picture} />}
+          <Sender direction={direction} sender={sender} />
         </Header>
       )}
       <Content>
@@ -47,18 +46,32 @@ const Content = styled.div`
   height: 100%;
   display: flex;
 `;
-const Sender = styled.p`
-  display: inline-block;
-  margin-right: 10px;
-  font-size: 12px;
-  margin-left: ${props => (props.direction === "left" ? "0px" : "auto")};
-  margin-right: ${props => (props.direction === "right" ? "0px" : "auto")};
-`;
-const SenderPicture = styled.img`
-  border-radius: 50%;
-  height: 100%;
-  margin-left: 10px;
-`;
+const Sender = React.memo(({ direction, sender }) => {
+  const SenderName = styled.p`
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 12px;
+    margin-left: ${direction === "left" ? "0px" : "auto"};
+    margin-right: ${direction === "right" ? "0px" : "auto"};
+  `;
+  const SenderPicture = styled.img`
+    border-radius: 50%;
+    height: 100%;
+    margin-left: 10px;
+  `;
+  console.log("sender", sender);
+  return (
+    <>
+      {direction === "left" && sender.picture && (
+        <SenderPicture alt="hi" src={sender.picture} />
+      )}
+      <SenderName>{sender.name}</SenderName>
+      {direction === "right" && sender.picture && (
+        <SenderPicture alt="hi" src={sender.picture} />
+      )}
+    </>
+  );
+});
 const Message = styled.div`
   display: inline-block;
   background-color: ${props =>

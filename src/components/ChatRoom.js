@@ -16,6 +16,7 @@ const formatUsername = user => {
   const {
     profile: { firstName, lastName },
   } = user;
+  console.log('formatting name', firstName, lastName)
   return firstName && lastName ? `${firstName} ${lastName}` : "Anonymous";
 };
 
@@ -30,10 +31,11 @@ export default function ChatRoom(props) {
   const sendMessage = text => {
     const _id = new BSON.ObjectId();
     const ts = Date.now();
+    console.log("currentUser", currentUser);
     const sender = {
       id: currentUser.id,
       name: formatUsername(currentUser),
-      picture: currentUser.profile.data.picture,
+      picture: currentUser.profile.pictureUrl,
     };
     const message = { _id, ts, sender, text };
     addMessageToRoom(message, props.room._id);
