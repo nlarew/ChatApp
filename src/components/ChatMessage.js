@@ -13,6 +13,7 @@ export default function ChatMessage(props) {
       {!props.noHeader && (
         <Header>
           <Sender direction={direction}>{sender.name}</Sender>
+          {sender.picture && <SenderPicture alt="hi" src={sender.picture} />}
         </Header>
       )}
       <Content>
@@ -40,6 +41,7 @@ const Layout = styled.div`
 const Header = styled.div`
   height: 20px;
   display: flex;
+  margin-bottom: 4px;
 `;
 const Content = styled.div`
   height: 100%;
@@ -51,6 +53,11 @@ const Sender = styled.p`
   font-size: 12px;
   margin-left: ${props => (props.direction === "left" ? "0px" : "auto")};
   margin-right: ${props => (props.direction === "right" ? "0px" : "auto")};
+`;
+const SenderPicture = styled.img`
+  border-radius: 50%;
+  height: 100%;
+  margin-left: 10px;
 `;
 const Message = styled.div`
   display: inline-block;

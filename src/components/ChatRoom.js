@@ -33,6 +33,7 @@ export default function ChatRoom(props) {
     const sender = {
       id: currentUser.id,
       name: formatUsername(currentUser),
+      picture: currentUser.profile.data.picture,
     };
     const message = { _id, ts, sender, text };
     addMessageToRoom(message, props.room._id);
