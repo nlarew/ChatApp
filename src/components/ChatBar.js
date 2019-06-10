@@ -41,7 +41,6 @@ const Layout = styled.div`
   background-color: lightgray;
   display: flex;
   flex-direction: row;
-  // align-items: center;
   padding: 12px 12px;
   box-sizing: border-box;
   flex-grow: 0;

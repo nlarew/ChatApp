@@ -59,7 +59,6 @@ const Sender = React.memo(({ direction, sender }) => {
     height: 100%;
     margin-left: 10px;
   `;
-  console.log("sender", sender);
   return (
     <>
       {direction === "left" && sender.picture && (

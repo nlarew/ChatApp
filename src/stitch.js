@@ -41,10 +41,9 @@ export function getCurrentUser() {
   return app.auth.isLoggedIn ? app.auth.user : null;
 }
 export const handleOAuthRedirects = async () => {
-  const { auth } = app;
-  if (auth.hasRedirectResult()) {
+  if (app.auth.hasRedirectResult()) {
     console.log("hasRedirectResult - true");
-    const user = await auth.handleRedirectResult();
+    const user = await app.auth.handleRedirectResult();
     return user;
   } else {
     console.log("hasRedirectResult - false");
@@ -53,7 +52,6 @@ export const handleOAuthRedirects = async () => {
 };
 export async function logout() {
   const { user } = app.auth;
-  console.log("app.auth", app.auth);
   return user && (await app.auth.logoutUserWithId(user.id));
 }
 export function addAuthenticationListener(listener) {
@@ -83,15 +81,13 @@ export function getChatrooms() {
 }
 
 export async function searchForChatrooms(searchText) {
-  const searchRegex = new BSON.BSONRegExp(`${searchText}`);
-  console.log(searchRegex);
+  const searchRegex = new BSON.BSONRegExp(`${searchText}`, "i");
   const rooms = await chatrooms
     .find({
       isPublic: true,
       name: searchRegex,
     })
     .toArray();
-  console.log("got rooms", rooms);
   return rooms;
 }
 
@@ -135,13 +131,8 @@ export async function createChatroom({ name }) {
     isArchived: false,
     isPublic: true,
   };
-  try {
-    const result = await chatrooms.insertOne(room);
-    return { ...room, _id: result.insertedId };
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
+  const result = await chatrooms.insertOne(room);
+  return { ...room, _id: result.insertedId };
 }
 
 export function watchChatrooms(chatroom_ids) {

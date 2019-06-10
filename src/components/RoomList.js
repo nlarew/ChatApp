@@ -11,19 +11,16 @@ export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
     <Layout>
       <List>
         {rooms.length > 0 &&
-          rooms.filter(userIsInRoom).map((room, i) => {
+          rooms.filter(userIsInRoom).map(room => {
             const roomId = room._id.toString();
-            const setAsCurrentRoom = () => {
-              console.log(room.members, currentUser.id);
-              setCurrentRoom(room);
-            };
             const isCurrentRoom = currentRoom && currentRoom._id === room._id;
+            const setAsCurrentRoom = () => setCurrentRoom(room);
             return (
               <Room
-                key={roomId + i}
+                key={roomId}
                 room={room}
-                onClick={setAsCurrentRoom}
                 isCurrentRoom={isCurrentRoom}
+                onClick={setAsCurrentRoom}
               />
             );
           })}

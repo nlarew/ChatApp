@@ -56,8 +56,8 @@ function ChatApp() {
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100vh;
+  box-sizing: border-box;
 `;
 function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
   const { isLoggedIn } = useStitchAuth();

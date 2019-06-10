@@ -23,8 +23,16 @@ export default function Navbar({
   const [searchModalProps, searchModalIsOpen, searchModalActions] = useModal(
     "search",
   );
+  const [newRoomError, setNewRoomError] = React.useState(null);
   const createRoomWithName = async name => {
-    const room = await createChatroom({ name });
+    if (newRoomError) {
+      setNewRoomError(null);
+    }
+    const room = await createChatroom({ name }).catch(err => {
+      console.log(err);
+      const isDuplicate = /Duplicate key error/.test(err.message);
+      if (isDuplicate) setNewRoomError("Room name is already in use.");
+    });
     if (room) {
       addRoom(room);
       newRoomModalActions.close();
@@ -73,9 +81,7 @@ export default function Navbar({
           (currentRoom ? (
             <Button onClick={unsetCurrentRoom}>All Rooms</Button>
           ) : (
-            <Button onClick={newRoomModalActions.open}>
-              Create a New Room
-            </Button>
+            <Button onClick={newRoomModalActions.open}>New Room</Button>
           ))}
       </NavbarLeft>
       <NavTitle />
@@ -86,6 +92,7 @@ export default function Navbar({
         {...newRoomModalProps}
         isOpen={newRoomModalIsOpen}
         handleSubmit={createRoomWithName}
+        errorMessage={newRoomError}
       />
       <SearchModal
         {...searchModalProps}
@@ -124,7 +131,6 @@ const Button = styled.button`
   border-radius: 4px;
   line-height: 16px;
   font-size: 16px;
-  text-align: right;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: grey;
   color: ${props => props.color || "white"};

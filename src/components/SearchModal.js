@@ -45,7 +45,6 @@ export default React.memo(function SearchModal({
   };
   useEffect(focusInput);
 
-  // React.useEffect(focusInput);
   const [searchResults, searchTerm, clearSearchResults] = useSearch(
     searchInput.value,
     handleSearch,
@@ -134,7 +133,6 @@ const ResultsList = styled.ul`
   list-style: none;
   max-height: 200px;
   overflow-y: scroll;
-  /* border: 0.5px solid black; */
   box-shadow: 0 0 0 1px #000;
   box-sizing: border-box;
   ::-webkit-scrollbar {
