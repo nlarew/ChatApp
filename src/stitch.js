@@ -52,8 +52,17 @@ export const handleOAuthRedirects = async () => {
   }
 };
 export async function logout() {
-  const { currentUser } = app.auth;
-  return currentUser && (await app.auth.logoutUserWithId(currentUser.id));
+  const { user } = app.auth;
+  console.log("app.auth", app.auth);
+  return user && (await app.auth.logoutUserWithId(user.id));
+}
+export function addAuthenticationListener(listener) {
+  console.log("adding auth listener", listener);
+  app.auth.addAuthListener(listener);
+}
+export function removeAuthenticationListener(listener) {
+  console.log("removing auth listener", listener);
+  app.auth.removeAuthListener(listener);
 }
 export function logCurrentStitchUser() {
   console.log("current stitch user:", app.auth.currentUser);

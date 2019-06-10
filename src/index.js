@@ -6,5 +6,5 @@ import ReactDOM from "react-dom";
 import ChatApp from "./components/ChatApp.js";
 import { handleOAuthRedirects } from "./stitch";
 
-handleOAuthRedirects();
+// handleOAuthRedirects();
 ReactDOM.render(<ChatApp />, document.getElementById("root"));

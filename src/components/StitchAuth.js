@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   hasLoggedInUser,
   logout,
@@ -7,6 +7,8 @@ import {
   loginFacebook,
   loginGoogle,
   handleOAuthRedirects,
+  addAuthenticationListener,
+  removeAuthenticationListener,
 } from "./../stitch";
 
 // Create a React Context that lets us expose and access auth state
@@ -29,27 +31,66 @@ export function StitchAuthProvider(props) {
     isLoggedIn: hasLoggedInUser(),
     currentUser: getCurrentUser(),
   });
+  const [hasRegisteredListener, setHasRegisteredListener] = React.useState(
+    false,
+  );
 
-  const setLoggedInUserState = loggedInUser => {
-    console.log("loggedInUser", loggedInUser);
-    setAuthState(authState => ({
-      ...authState,
-      isLoggedIn: true,
-      currentUser: loggedInUser,
-    }));
-  };
-  const setLoggedOutUserState = () => {
-    setAuthState(authState => ({
-      ...authState,
-      isLoggedIn: false,
-      currentUser: null,
-    }));
-  };
+  useEffect(() => {
+    if (hasRegisteredListener) {
+      handleOAuthRedirects();
+    }
+  }, [hasRegisteredListener]);
+
+  useEffect(() => {
+    const setLoggedInUserState = loggedInUser => {
+      console.log("loggedInUser", loggedInUser);
+      if (loggedInUser) {
+        setAuthState(authState => ({
+          ...authState,
+          isLoggedIn: true,
+          currentUser: loggedInUser,
+        }));
+      }
+    };
+    const setLoggedOutUserState = () => {
+      setAuthState(authState => ({
+        ...authState,
+        isLoggedIn: false,
+        currentUser: null,
+      }));
+    };
+    const authListener = {
+      onUserLoggedIn: (auth, loggedInUser) => {
+        console.log("onUserLoggedIn:", loggedInUser);
+        setLoggedInUserState(loggedInUser);
+      },
+      onUserLoggedOut: (auth, loggedOutUser) => {
+        console.log("onUserLoggedOut:", loggedOutUser);
+        setLoggedOutUserState();
+      },
+      onActiveUserChanged: (auth, currentActiveUser, previousActiveUser) => {
+        console.log(
+          "onActiveUserChanged:",
+          currentActiveUser,
+          previousActiveUser,
+        );
+      },
+      onListenerRegistered: auth => {
+        console.log("onListenerRegistered");
+      },
+    };
+    addAuthenticationListener(authListener);
+    setHasRegisteredListener(true);
+    return () => {
+      removeAuthenticationListener(authListener);
+      setHasRegisteredListener(false);
+    };
+  }, []);
 
   const handleLogin = React.useCallback(
     async provider => {
       const loginMethod = {
-        anonymous: () => loginAnonymous().then(setLoggedInUserState),
+        anonymous: () => loginAnonymous(),
         facebook: () => loginFacebook(),
         google: () => loginGoogle(),
       }[provider];
@@ -57,12 +98,9 @@ export function StitchAuthProvider(props) {
     },
     [authState],
   );
-
   const handleLogout = React.useCallback(async () => {
-    const { isLoggedIn } = authState;
-    if (isLoggedIn) {
-      await logout();
-      setLoggedOutUserState();
+    if (authState.isLoggedIn) {
+      logout();
     } else {
       console.log(`can't handleLogout when no user is logged in`);
     }
@@ -71,25 +109,11 @@ export function StitchAuthProvider(props) {
   // We useMemo to improve performance by eliminating some re-renders
   const authInfo = React.useMemo(() => {
     const { isLoggedIn, currentUser } = authState;
-    // const handleRedirects = async () => {
-    //   const loggedInUser = await handleOAuthRedirects();
-    //   console.log("handleRedirects - handled", loggedInUser);
-    //   if (loggedInUser) {
-    //     setAuthState(authState => ({
-    //       ...authState,
-    //       isLoggedIn: true,
-    //       currentUser: loggedInUser,
-    //     }));
-    //   }
-    // };
     const value = {
       isLoggedIn,
       currentUser,
       actions: {
-        // handleAnonymousLogin,
-        // handleOAuthLogin,
         handleLogin,
-        // handleRedirects,
         handleLogout,
       },
     };

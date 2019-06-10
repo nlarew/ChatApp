@@ -7,16 +7,19 @@ import RoomList from "./RoomList";
 import Navbar from "./Navbar";
 import { useWatchChatrooms } from "./useChatroom";
 import { getCurrentUser } from "./../stitch";
+import { handleOAuthRedirects } from "./../stitch";
 
-export default () => (
-  <StitchAuthProvider>
-    <ChatApp />
-  </StitchAuthProvider>
-);
+export default function() {
+  return (
+    <StitchAuthProvider>
+      <ChatApp />
+    </StitchAuthProvider>
+  );
+}
 
 function ChatApp() {
   const [currentRoom, setCurrentRoom] = useState(null);
-  const [rooms, { addRoom, updateRooms, clearRooms }] = useWatchChatrooms();
+  const [rooms, { addRoom, clearRooms }] = useWatchChatrooms();
   useEffect(() => {
     if (currentRoom) {
       const updatedRoom = rooms.find(
@@ -40,7 +43,6 @@ function ChatApp() {
           setCurrentRoom(null);
           clearRooms();
         }}
-        updateRooms={updateRooms}
       >
         {currentRoom ? (
           <ChatRoom room={currentRoom} />
@@ -59,16 +61,20 @@ const Layout = styled.div`
 `;
 function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
   const { isLoggedIn } = useStitchAuth();
-  const loginStateRef = React.useRef();
-  useEffect(() => {
-    const previousState = loginStateRef.current;
-    if (!previousState) {
-      console.log("current", getCurrentUser());
-    }
-    if (previousState && previousState !== isLoggedIn) {
-      onLogout();
-    }
-    loginStateRef.current = isLoggedIn;
-  }, [isLoggedIn, onLogout]);
+  // const loginStateRef = React.useRef();
+  // useEffect(() => {
+  //   const previousState = loginStateRef.current;
+  //   if (!previousState) {
+  //     loginStateRef.current = isLoggedIn;
+  //   }
+  //   if (
+  //     previousState &&
+  //     previousState !== false &&
+  //     previousState !== isLoggedIn
+  //   ) {
+  //     onLogout();
+  //   }
+  //   loginStateRef.current = isLoggedIn;
+  // }, [isLoggedIn, onLogout]);
   return isLoggedIn ? props.children : <LoginScreen />;
 }
