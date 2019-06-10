@@ -55,7 +55,7 @@ export async function logout() {
   const { currentUser } = app.auth;
   return currentUser && (await app.auth.logoutUserWithId(currentUser.id));
 }
-export async function logCurrentStitchUser() {
+export function logCurrentStitchUser() {
   console.log("current stitch user:", app.auth.currentUser);
 }
 

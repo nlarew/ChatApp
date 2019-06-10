@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
-import { addMessageToRoom } from "./../stitch";
+import { addMessageToRoom, logCurrentStitchUser } from "./../stitch";
 
 import ChatFeed from "./ChatFeed";
 import ChatBar from "./ChatBar";
@@ -32,6 +32,7 @@ export default function ChatRoom(props) {
     const _id = new BSON.ObjectId();
     const ts = Date.now();
     console.log("currentUser", currentUser);
+    logCurrentStitchUser()
     const sender = {
       id: currentUser.id,
       name: formatUsername(currentUser),
