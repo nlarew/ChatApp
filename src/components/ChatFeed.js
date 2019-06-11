@@ -9,13 +9,15 @@ import { animateScroll as scroll } from "react-scroll";
 const ChatFeed = props => {
   const { messages } = props;
   const { currentUser } = useStitchAuth();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   useEffect(() => {
     scroll.scrollToBottom({
       containerId: "feed",
-      duration: 320,
-      delay: 40,
+      duration: isInitialLoad ? 0 : 320,
+      delay: isInitialLoad ? 0 : 40,
     });
-  }, [messages]);
+    setIsInitialLoad(false);
+  }, [messages, isInitialLoad]);
   const isFromCurrentUser = message => {
     return !!message && message.sender.id === currentUser.id;
   };
