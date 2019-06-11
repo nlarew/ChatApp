@@ -3,7 +3,12 @@ import styled from "@emotion/styled";
 import ModalCard from "./ModalCard";
 import useControlledInput from "./useControlledInput";
 import { Modal } from "./useModal";
-import { loginEmailPassword, registerEmailPasswordUser } from "./../stitch";
+import { toast } from "react-toastify";
+import {
+  loginEmailPassword,
+  registerEmailPasswordUser,
+  resendConfirmationEmail,
+} from "./../stitch";
 import validator from "validator";
 
 export default React.memo(function EmailPasswordLoginModal(props) {
@@ -63,12 +68,24 @@ export default React.memo(function EmailPasswordLoginModal(props) {
     const emailIsValid = validateEmail();
     const passwordIsValid = validatePassword();
     if (emailIsValid && passwordIsValid) {
-      registerEmailPasswordUser(emailInput.value, passwordInput.value).catch(
-        err => {
-          const nameAlreadyInUse = /name already in use/.test(err.message);
-          if (nameAlreadyInUse) setEmailInputError("Email is already in use.");
-        },
-      );
+      const toastSuccessfulRegistration = () => {
+        toast(`Sent a registration email to ${emailInput.value}`, {
+          type: toast.TYPE.SUCCESS,
+        });
+      };
+      const handleUnsuccessfulRegistration = async err => {
+        const nameAlreadyInUse = /name already in use/.test(err.message);
+        try {
+          await resendConfirmationEmail(emailInput.value);
+          toastSuccessfulRegistration();
+        } catch (error) {
+          const alreadyConfirmed = /already confirmed/.test(err.message);
+          if (alreadyConfirmed) setEmailInputError("Email is already in use.");
+        }
+      };
+      registerEmailPasswordUser(emailInput.value, passwordInput.value)
+        .then(toastSuccessfulRegistration)
+        .catch(handleUnsuccessfulRegistration);
     }
   };
 

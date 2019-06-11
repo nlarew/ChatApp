@@ -22,7 +22,14 @@ export default function ChatApp(props) {
 
   return (
     <Layout>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={10000}
+        hideProgressBar={true}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+      />
       <Navbar
         rooms={rooms}
         currentRoom={currentRoom}

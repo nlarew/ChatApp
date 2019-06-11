@@ -53,6 +53,11 @@ export async function registerEmailPasswordUser(email, password) {
   const emailPasswordAuth = getEmailPasswordClient();
   return await emailPasswordAuth.registerWithEmail(email, password);
 }
+export async function resendConfirmationEmail(email) {
+  console.log("re-sending email/password user confirmation email");
+  const emailPasswordAuth = getEmailPasswordClient();
+  return await emailPasswordAuth.resendConfirmationEmail(email);
+}
 export async function confirmEmailPasswordUser() {
   console.log("confirming email/password user");
   const urlParams = new URLSearchParams(window.location.search);

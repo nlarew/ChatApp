@@ -14,10 +14,12 @@ import { BSON } from "mongodb-stitch-core-sdk";
  */
 const formatUsername = user => {
   const {
-    profile: { firstName, lastName },
+    profile: { firstName, lastName, email },
   } = user;
-  console.log("formatting name", firstName, lastName);
-  return firstName && lastName ? `${firstName} ${lastName}` : "Anonymous";
+  const hasFullname = firstName && lastName;
+  const fullName = `${firstName} ${lastName}`;
+  const hasEmail = Boolean(email);
+  return hasFullname ? fullName : hasEmail ? email : "Anonymous";
 };
 
 export default function ChatRoom(props) {
