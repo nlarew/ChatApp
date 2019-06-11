@@ -6,13 +6,9 @@ import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
 import { useWatchChatrooms } from "./useChatroom";
+import { ToastContainer } from "react-toastify";
 
-export default function ChatApp({
-  appSuccessMessage,
-  setAppSuccessMessage,
-  appErrorMessage,
-  setAppErrorMessage,
-}) {
+export default function ChatApp(props) {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [rooms, { addRoom, clearRooms }] = useWatchChatrooms();
   useEffect(() => {
@@ -26,6 +22,7 @@ export default function ChatApp({
 
   return (
     <Layout>
+      <ToastContainer />
       <Navbar
         rooms={rooms}
         currentRoom={currentRoom}
