@@ -62,6 +62,7 @@ export default React.memo(function EmailPasswordLoginModal(props) {
           setAuthenticationError("Invalid Email or Password.");
       });
     }
+    props.actions.close();
   };
   const handleRegistration = async () => {
     setAuthenticationError(null);
@@ -72,13 +73,13 @@ export default React.memo(function EmailPasswordLoginModal(props) {
         toast(`Sent a registration email to ${emailInput.value}`, {
           type: toast.TYPE.SUCCESS,
         });
+        props.actions.close();
       };
-      const handleUnsuccessfulRegistration = async err => {
-        const nameAlreadyInUse = /name already in use/.test(err.message);
+      const handleUnsuccessfulRegistration = async () => {
         try {
           await resendConfirmationEmail(emailInput.value);
           toastSuccessfulRegistration();
-        } catch (error) {
+        } catch (err) {
           const alreadyConfirmed = /already confirmed/.test(err.message);
           if (alreadyConfirmed) setEmailInputError("Email is already in use.");
         }

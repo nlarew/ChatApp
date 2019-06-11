@@ -61,6 +61,8 @@ export default function LoginScreen(props) {
           )}
         </Card>
         <EmailPasswordLoginModal
+          {...emailModal}
+          actions={emailModalActions}
           isOpen={emailModalIsOpen}
           onRequestClose={emailModalActions.close}
         />
