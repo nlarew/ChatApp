@@ -7,7 +7,7 @@ import ChatApp from "./components/ChatApp.js";
 import { Router, navigate } from "@reach/router";
 import { confirmEmailPasswordUser } from "./stitch";
 import { StitchAuthProvider } from "./components/StitchAuth";
-import { ToastContainer, toast } from "./components/StitchAuth";
+import { ToastContainer, toast } from "react-toastify";
 
 const ConfirmEmail = ({ onSuccess, onFailure }) => {
   confirmEmailPasswordUser().then(onSuccess, onFailure);
