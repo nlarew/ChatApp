@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
 import Card from "./ModalCard";
 import Loader from "react-loader-spinner";
 import EmailPasswordLoginModal from "./EmailPasswordLoginModal";
 import useModal from "./useModal";
-const pass = () => {};
 
 export default function LoginScreen(props) {
   const { actions } = useStitchAuth();
@@ -89,7 +88,8 @@ const ButtonGroup = styled.div`
 `;
 // prettier-ignore
 const ProviderButton = styled.button`
-  background: ${({provider}) => {
+  background: ${({provider, disabled}) => {
+    if (disabled) return "lightgrey"
     switch (provider) {
       case "anonymous": return "orange"
       case "userpass":  return "rebeccapurple"
@@ -98,5 +98,14 @@ const ProviderButton = styled.button`
       default: {}
     }
   }};
-  background: ${({disabled}) => disabled && "lightgrey"};
+  color: ${({provider, disabled}) => {
+    if (disabled) return "white"
+    switch (provider) {
+      case "anonymous": return "black"
+      case "userpass":  return "white"
+      case "facebook":  return "white"
+      case "google":    return "white"
+      default: {}
+    }
+  }};
 `;
