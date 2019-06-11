@@ -45,7 +45,10 @@ export default function Navbar({
     }
   };
   const handleSearch = React.useCallback(searchForChatrooms, []);
-  const handleSearchResult = React.useCallback(addUsertoSearchedRoom, [rooms]);
+  const handleSearchResult = React.useCallback(addUsertoSearchedRoom, [
+    rooms,
+    currentUser,
+  ]);
   const filterSearchedRooms = React.useCallback(
     searchedRooms => {
       if (currentUser) {

@@ -67,6 +67,11 @@ export default React.memo(function SearchModal({
     shouldFocusInput: prop.isOpen,
     shouldClearInput: !props.isOpen,
   });
+  const focusInput = () => {
+    if (props.isOpen) {
+      searchInputRef.current && searchInputRef.current.focus();
+    }
+  };
 
   const [searchResults, searchTerm] = useFilteredSearch(
     searchInput.value,
@@ -82,6 +87,7 @@ export default React.memo(function SearchModal({
           ref={searchInputRef}
           placeholder="Room Name"
           searchInput={searchInput}
+          focusInput={focusInput}
         />
         <SearchResults
           searchTerm={searchTerm}
@@ -93,9 +99,10 @@ export default React.memo(function SearchModal({
   );
 });
 const SearchInput = React.forwardRef(function(
-  { placeholder, searchInput },
+  { placeholder, searchInput, focusInput },
   inputRef,
 ) {
+  useEffect(focusInput);
   return (
     <Input
       ref={ref => (inputRef.current = ref)}
@@ -105,9 +112,46 @@ const SearchInput = React.forwardRef(function(
     />
   );
 });
+const ActionInput = React.forwardRef(function(
+  { placeholder, actionText, handleSubmit, focusInput, hasError },
+  inputRef,
+) {
+  const input = useInput("");
+  React.useEffect(focusInput);
+  const handleKeyPress = e => {
+    if (e.key === "Enter") {
+      handleSubmit(input.value);
+    }
+  };
+  return (
+    <ActionInputLayout>
+      <Input
+        ref={ref => (inputRef.current = ref)}
+        placeholder={placeholder}
+        value={input.value}
+        onChange={input.onChange}
+        onKeyDown={handleKeyPress}
+        hasError={hasError}
+      />
+      <ActionButton onClick={() => handleSubmit(input.value)}>
+        {actionText}
+      </ActionButton>
+    </ActionInputLayout>
+  );
+});
 const Input = styled.input`
+  flex-grow: 1;
   width: 100%;
   padding: 10px;
+  margin-right: 10px;
+  border-radius: 4px;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  }
+  background: ${props => props.hasError && "rgba(255, 0, 0, 0.25);"};
 `;
 function SearchResults({ results, handleSearchResult, searchTerm }) {
   return (
