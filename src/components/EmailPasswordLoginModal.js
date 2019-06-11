@@ -62,7 +62,6 @@ export default React.memo(function EmailPasswordLoginModal(props) {
           setAuthenticationError("Invalid Email or Password.");
       });
     }
-    props.actions.close();
   };
   const handleRegistration = async () => {
     setAuthenticationError(null);
