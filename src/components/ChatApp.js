@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
-import { StitchAuthProvider, useStitchAuth } from "./StitchAuth";
+import { useStitchAuth } from "./StitchAuth";
 import LoginScreen from "./LoginScreen";
 import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
 import { useWatchChatrooms } from "./useChatroom";
-import { getCurrentUser } from "./../stitch";
-import { handleOAuthRedirects } from "./../stitch";
 
-export default function() {
-  return (
-    <StitchAuthProvider>
-      <ChatApp />
-    </StitchAuthProvider>
-  );
-}
-
-function ChatApp() {
+export default function ChatApp({
+  appSuccessMessage,
+  setAppSuccessMessage,
+  appErrorMessage,
+  setAppErrorMessage,
+}) {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [rooms, { addRoom, clearRooms }] = useWatchChatrooms();
   useEffect(() => {

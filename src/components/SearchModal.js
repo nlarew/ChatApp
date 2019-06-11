@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import ModalCard from "./ModalCard";
-import { useInput } from "react-hanger";
+import useControlledInput from "./useControlledInput";
 import { Modal } from "./useModal";
 import { NumMembers, NumMessages } from "./RoomList";
 import useDebounce from "./useDebounce";
+import prop from "ramda/es/prop";
 
-function useSearch(searchTerm, handleSearch) {
+function useSearch(searchTerm, handleSearch, options = {}) {
+  const { shouldClearResults = false } = options;
   const [searchedTerm, setSearchedTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  // Search for the input value
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -25,9 +29,32 @@ function useSearch(searchTerm, handleSearch) {
     }
   }, [handleSearch, debouncedSearchTerm]);
 
-  const clearSearchResults = () => setSearchResults([]);
+  // Clear the search results
+  useEffect(() => {
+    if (shouldClearResults) {
+      setSearchResults([]);
+    }
+  }, [shouldClearResults]);
 
-  return [searchResults, searchedTerm, clearSearchResults];
+  return [searchResults, searchedTerm];
+}
+function useFilteredSearch(
+  inputText,
+  handleSearch,
+  searchFilter = r => r,
+  options,
+) {
+  const [searchResults, searchTerm] = useSearch(
+    inputText,
+    handleSearch,
+    options,
+  );
+  const [filteredResults, setFilteredResults] = useState([]);
+  useEffect(() => {
+    setFilteredResults(searchFilter(searchResults));
+  }, [searchFilter, searchResults]);
+
+  return [filteredResults, searchTerm];
 }
 
 export default React.memo(function SearchModal({
@@ -36,45 +63,30 @@ export default React.memo(function SearchModal({
   handleSearchResult,
   ...props
 }) {
-  const searchInput = useInput("");
-  const inputRef = React.useRef();
-  const focusInput = () => {
-    if (props.isOpen) {
-      inputRef.current && inputRef.current.focus();
-    }
-  };
-  useEffect(focusInput);
+  const [searchInput, searchInputRef] = useControlledInput("", {
+    shouldFocusInput: prop.isOpen,
+    shouldClearInput: !props.isOpen,
+  });
 
-  const [searchResults, searchTerm, clearSearchResults] = useSearch(
+  const [searchResults, searchTerm] = useFilteredSearch(
     searchInput.value,
     handleSearch,
+    searchFilter,
+    { shouldClearResults: !props.isOpen },
   );
-  const [filteredResults, setFilteredResults] = useState([]);
-  useEffect(() => {
-    if (searchFilter && searchResults.length) {
-      setFilteredResults(searchFilter(searchResults));
-    } else {
-      setFilteredResults(searchResults);
-    }
-  }, [searchFilter, searchResults]);
-  useEffect(() => {
-    if (!props.isOpen) {
-      searchInput.clear();
-      clearSearchResults();
-    }
-  }, [props.isOpen, searchInput, clearSearchResults]);
+
   return (
     <Modal {...props}>
       <ModalCard heading="Search for Rooms">
         <SearchInput
-          ref={inputRef}
+          ref={searchInputRef}
           placeholder="Room Name"
           searchInput={searchInput}
         />
         <SearchResults
           searchTerm={searchTerm}
           handleSearchResult={handleSearchResult}
-          results={filteredResults}
+          results={searchResults}
         />
       </ModalCard>
     </Modal>

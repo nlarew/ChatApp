@@ -5,6 +5,8 @@ import {
   FacebookRedirectCredential,
   GoogleRedirectCredential,
   RemoteMongoClient,
+  UserPasswordCredential,
+  UserPasswordAuthProviderClient,
 } from "mongodb-stitch-browser-sdk";
 
 /**
@@ -33,6 +35,31 @@ export async function loginFacebook() {
 export async function loginGoogle() {
   console.log("logging in with google");
   return await app.auth.loginWithRedirect(new GoogleRedirectCredential());
+}
+export async function loginEmailPassword(email, password) {
+  console.log("logging in with email/password");
+  return await app.auth.loginWithCredential(
+    new UserPasswordCredential(email, password),
+  );
+}
+function getEmailPasswordClient() {
+  return app.auth.getProviderClient(
+    UserPasswordAuthProviderClient.factory,
+    "local-userpass",
+  );
+}
+export async function registerEmailPasswordUser(email, password) {
+  console.log("registering email/password user");
+  const emailPasswordAuth = getEmailPasswordClient();
+  return await emailPasswordAuth.registerWithEmail(email, password);
+}
+export async function confirmEmailPasswordUser() {
+  console.log("confirming email/password user");
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+  const tokenId = urlParams.get("tokenId");
+  const emailPasswordAuth = getEmailPasswordClient();
+  return await emailPasswordAuth.confirmUser(token, tokenId);
 }
 export function hasLoggedInUser() {
   return app.auth.isLoggedIn;

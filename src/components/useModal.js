@@ -7,6 +7,7 @@ export default function useModal(label) {
   const actions = {
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
+    toggle: () => setIsOpen(!isOpen),
   };
   const props = {
     isOpen,

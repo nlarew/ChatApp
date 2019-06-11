@@ -23,7 +23,7 @@ export default function InputModal({ handleSubmit, errorMessage, ...props }) {
           actionText="Create"
           hasError={Boolean(errorMessage)}
         />
-        <ErrorLabel for="newRoomInput">{errorMessage}</ErrorLabel>
+        <ErrorLabel htmlFor="newRoomInput">{errorMessage}</ErrorLabel>
       </ModalCard>
     </Modal>
   );

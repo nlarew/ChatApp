@@ -48,12 +48,18 @@ export default function Navbar({
   const handleSearchResult = React.useCallback(addUsertoSearchedRoom, [rooms]);
   const filterSearchedRooms = React.useCallback(
     searchedRooms => {
-      const userIsInRoom = room => room.members.includes(currentUser.id);
-      const userRoomIds = rooms.filter(userIsInRoom).map(r => r._id.toString());
-      const joinableRooms = searchedRooms.filter(
-        searchedRoom => !userRoomIds.includes(searchedRoom._id.toString()),
-      );
-      return joinableRooms;
+      if (currentUser) {
+        const userIsInRoom = room => room.members.includes(currentUser.id);
+        const userRoomIds = rooms
+          .filter(userIsInRoom)
+          .map(r => r._id.toString());
+        const joinableRooms = searchedRooms.filter(
+          searchedRoom => !userRoomIds.includes(searchedRoom._id.toString()),
+        );
+        return joinableRooms;
+      } else {
+        return [];
+      }
     },
     [rooms, currentUser],
   );

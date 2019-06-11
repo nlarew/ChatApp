@@ -1,20 +1,18 @@
 import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
-import ModalCard from "./ModalCard";
+import Card from "./ModalCard";
 import Loader from "react-loader-spinner";
-
+import EmailPasswordLoginModal from "./EmailPasswordLoginModal";
+import useModal from "./useModal";
 const pass = () => {};
 
 export default function LoginScreen(props) {
   const { actions } = useStitchAuth();
+
+  const [emailModal, emailModalIsOpen, emailModalActions] = useModal("email");
+
   const [isHandlingLogin, setIsHandlingLogin] = React.useState(false);
-  useEffect(
-    () => () => {
-      setIsHandlingLogin(false);
-    },
-    [],
-  );
   const handleLogin = provider => {
     setIsHandlingLogin(true);
     actions.handleLogin(provider);
@@ -22,7 +20,7 @@ export default function LoginScreen(props) {
   return (
     <Layout>
       <Content>
-        <ModalCard heading="Log In to Start Chatting">
+        <Card heading="Log In to Start Chatting">
           {isHandlingLogin ? (
             <span>
               Logging in
@@ -41,7 +39,10 @@ export default function LoginScreen(props) {
               >
                 Anonymous
               </ProviderButton>
-              <ProviderButton provider="userpass" onClick={pass}>
+              <ProviderButton
+                provider="userpass"
+                onClick={emailModalActions.open}
+              >
                 Email/Password
               </ProviderButton>
               <ProviderButton
@@ -58,7 +59,11 @@ export default function LoginScreen(props) {
               </ProviderButton>
             </ButtonGroup>
           )}
-        </ModalCard>
+        </Card>
+        <EmailPasswordLoginModal
+          isOpen={emailModalIsOpen}
+          onRequestClose={emailModalActions.close}
+        />
       </Content>
     </Layout>
   );
