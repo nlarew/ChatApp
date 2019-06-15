@@ -54,7 +54,7 @@ export function StitchAuthProvider(props) {
 
   useEffect(() => {
     if (hasRegisteredListener) {
-      handleOAuthRedirects().then(setLoggedInUserState);
+      handleOAuthRedirects();
     }
   }, [hasRegisteredListener]);
 
@@ -67,19 +67,6 @@ export function StitchAuthProvider(props) {
       onUserLoggedOut: (auth, loggedOutUser) => {
         console.log("onUserLoggedOut:", loggedOutUser);
         setLoggedOutUserState();
-      },
-      onUserAdded: (auth, addedUser) => {
-        console.log("onUserAdded:", addedUser.profile);
-      },
-      onActiveUserChanged: (auth, currentActiveUser, previousActiveUser) => {
-        console.log(
-          "onActiveUserChanged:",
-          currentActiveUser,
-          previousActiveUser,
-        );
-      },
-      onListenerRegistered: auth => {
-        console.log("onListenerRegistered");
       },
     };
     addAuthenticationListener(authListener);
