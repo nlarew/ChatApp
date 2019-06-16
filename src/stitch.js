@@ -94,9 +94,6 @@ export function removeAuthenticationListener(listener) {
   console.log("removing auth listener", listener);
   app.auth.removeAuthListener(listener);
 }
-export function logCurrentStitchUser() {
-  console.log("current stitch user:", app.auth.currentUser);
-}
 
 /**
  * MongoDB

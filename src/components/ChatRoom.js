@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
-import { addMessageToRoom, logCurrentStitchUser } from "./../stitch";
+import { addMessageToRoom } from "./../stitch";
 
 import ChatFeed from "./ChatFeed";
 import ChatBar from "./ChatBar";
@@ -31,7 +31,6 @@ export default function ChatRoom(props) {
   const sendMessage = text => {
     const _id = new BSON.ObjectId();
     const ts = Date.now();
-    logCurrentStitchUser();
     const sender = {
       id: currentUser.id,
       name: formatUsername(currentUser),

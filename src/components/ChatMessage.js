@@ -100,7 +100,7 @@ const Message = styled.div`
 const MessageText = styled.div`
   white-space: pre-wrap;
 `;
-const Timestamp = props => {
+const Timestamp = React.forwardRef((props, ref) => {
   const date = new Date(props.ts);
   const formattedDate = format(date, "MM/DD/YYYY");
   const formattedTime = format(date, "HH:MM:SS A");
@@ -120,8 +120,8 @@ const Timestamp = props => {
       position: relative;
     }
   `;
-  return <TimestampLayout direction={props.direction} />;
-};
+  return <TimestampLayout ref={ref} direction={props.direction} />;
+});
 
 function useHover() {
   const [value, setValue] = React.useState(false);
