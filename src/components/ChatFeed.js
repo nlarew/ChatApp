@@ -1,23 +1,13 @@
-/** @jsx jsx */
-import React, { useRef, useState, useEffect } from "react";
-import { css, jsx } from "@emotion/core";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import styled from "@emotion/styled";
 import ChatMessage from "./ChatMessage.js";
 import { useStitchAuth } from "./StitchAuth";
 import { animateScroll as scroll } from "react-scroll";
 
-const ChatFeed = props => {
+function ChatFeed(props) {
   const { messages } = props;
   const { currentUser } = useStitchAuth();
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  useEffect(() => {
-    scroll.scrollToBottom({
-      containerId: "feed",
-      duration: isInitialLoad ? 0 : 320,
-      delay: isInitialLoad ? 0 : 40,
-    });
-    setIsInitialLoad(false);
-  }, [messages, isInitialLoad]);
+  useScrollToMostRecentMessage(messages);
   const isFromCurrentUser = message => {
     return !!message && message.sender.id === currentUser.id;
   };
@@ -49,8 +39,35 @@ const ChatFeed = props => {
       </Feed>
     </ChatFeedLayout>
   );
-};
+}
 export default ChatFeed;
+
+function useScrollToMostRecentMessage(messages) {
+  const prevMessages = useRef();
+  if (!prevMessages.current) prevMessages.current = messages;
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  useLayoutEffect(() => {
+    if (isInitialLoad) {
+      scroll.scrollToBottom({
+        containerId: "feed",
+        duration: 0,
+        delay: 0,
+      });
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad]);
+  useEffect(() => {
+    if (!isInitialLoad) {
+      const hasNewMessage = prevMessages.current.length !== messages.length;
+      hasNewMessage &&
+        scroll.scrollToBottom({
+          containerId: "feed",
+          duration: 320,
+          delay: 0,
+        });
+    }
+  }, [messages, isInitialLoad]);
+}
 
 const ChatFeedLayout = styled.div`
   width: 100%;
