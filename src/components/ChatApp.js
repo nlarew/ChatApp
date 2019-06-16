@@ -10,7 +10,11 @@ import { ToastContainer } from "react-toastify";
 
 export default function ChatApp(props) {
   const [currentRoom, setCurrentRoom] = useState(null);
-  const [rooms, { addRoom, clearRooms }] = useWatchChatrooms();
+  const [rooms, { addRoom, updateRooms, clearRooms }] = useWatchChatrooms();
+  const { currentUser } = useStitchAuth();
+  useEffect(() => {
+    updateRooms();
+  }, [currentUser]);
   useEffect(() => {
     if (currentRoom) {
       const updatedRoom = rooms.find(
@@ -38,7 +42,6 @@ export default function ChatApp(props) {
       />
       <RequireLogin
         onLogout={() => {
-          console.log("onLogout");
           setCurrentRoom(null);
           clearRooms();
         }}

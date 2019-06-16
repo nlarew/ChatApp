@@ -35,23 +35,6 @@ export function StitchAuthProvider(props) {
     false,
   );
 
-  const setLoggedInUserState = loggedInUser => {
-    if (loggedInUser) {
-      setAuthState(authState => ({
-        ...authState,
-        isLoggedIn: true,
-        currentUser: loggedInUser,
-      }));
-    }
-  };
-  const setLoggedOutUserState = () => {
-    setAuthState(authState => ({
-      ...authState,
-      isLoggedIn: false,
-      currentUser: null,
-    }));
-  };
-
   useEffect(() => {
     if (hasRegisteredListener) {
       handleOAuthRedirects();
@@ -61,12 +44,20 @@ export function StitchAuthProvider(props) {
   useEffect(() => {
     const authListener = {
       onUserLoggedIn: (auth, loggedInUser) => {
-        console.log("onUserLoggedIn:", loggedInUser);
-        setLoggedInUserState(loggedInUser);
+        if (loggedInUser) {
+          setAuthState(authState => ({
+            ...authState,
+            isLoggedIn: true,
+            currentUser: loggedInUser,
+          }));
+        }
       },
       onUserLoggedOut: (auth, loggedOutUser) => {
-        console.log("onUserLoggedOut:", loggedOutUser);
-        setLoggedOutUserState();
+        setAuthState(authState => ({
+          ...authState,
+          isLoggedIn: false,
+          currentUser: null,
+        }));
       },
     };
     addAuthenticationListener(authListener);
