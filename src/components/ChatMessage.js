@@ -1,31 +1,36 @@
-/** @jsx jsx */
-import React, { useRef, useState, useEffect } from "react";
-import { css, jsx } from "@emotion/core";
+import React from "react";
 import styled from "@emotion/styled";
 import format from "date-fns/format";
+import useDebounce from "./useDebounce";
 
 export default function ChatMessage(props) {
   const { ts, sender, text } = props.message;
   const direction = props.isFromCurrentUser ? "right" : "left";
   const { isLastFromUser, isFirstFromUser } = props;
+  const [messageRowRef, isHoveringMessageRow] = useHover();
+  const [timestampRef, isHoveringTimestamp] = useHover();
+  const isHovered = isHoveringMessageRow || isHoveringTimestamp;
   return (
-    <Layout isLastFromUser={isLastFromUser} isFirstFromUser={isFirstFromUser}>
+    <Layout
+      ref={messageRowRef}
+      isLastFromUser={isLastFromUser}
+      isFirstFromUser={isFirstFromUser}
+    >
       {!props.noHeader && (
         <Header>
           <Sender direction={direction} sender={sender} />
         </Header>
       )}
       <Content>
+        {isHovered && direction === "right" && (
+          <Timestamp ref={timestampRef} direction={direction} ts={ts} />
+        )}
         <Message direction={direction} hasNext={!isLastFromUser}>
-          <Timestamp direction={direction} ts={ts} />
-          <div
-            css={css`
-              white-space: pre-wrap;
-            `}
-          >
-            {text}
-          </div>
+          <MessageText>{text}</MessageText>
         </Message>
+        {isHovered && direction === "left" && (
+          <Timestamp ref={timestampRef} direction={direction} ts={ts} />
+        )}
       </Content>
     </Layout>
   );
@@ -45,6 +50,9 @@ const Header = styled.div`
 const Content = styled.div`
   height: 100%;
   display: flex;
+  :hover {
+    background: #eee;
+  }
 `;
 const Sender = React.memo(({ direction, sender }) => {
   const SenderName = styled.p`
@@ -72,6 +80,7 @@ const Sender = React.memo(({ direction, sender }) => {
   );
 });
 const Message = styled.div`
+  max-width: 60%;
   display: inline-block;
   background-color: ${props =>
     props.direction === "left" ? "lightgrey" : "lightblue"};
@@ -88,37 +97,56 @@ const Message = styled.div`
     props.direction === "right" ? props.hasNext && "0px" : "12px"};
   padding: 10px;
 `;
+const MessageText = styled.div`
+  white-space: pre-wrap;
+`;
 const Timestamp = props => {
-  const direction = props.direction;
   const date = new Date(props.ts);
-  const MessageDate = props => {
-    const formatted = format(date, "MM/DD/YYYY");
-    const dateStyle = css``;
-    return <span css={dateStyle}>{formatted}</span>;
-  };
-  const MessageTime = props => {
-    const formatted = format(date, "HH:MM:SS A");
-    const timeStyle = css``;
-    return <span css={timeStyle}>{formatted}</span>;
-  };
-  return (
-    <div
-      css={css`
-        display: flex;
-        flex-direction: row;
-      `}
-    >
-      <div
-        css={css`
-          margin-left: ${direction === "left" ? "0px" : "auto"};
-          margin-right: ${direction === "right" ? "0px" : "auto"};
-          font-size: 12px;
-          font-style: italic;
-          padding-bottom: 4px;
-        `}
-      >
-        <MessageDate />@<MessageTime />
-      </div>
-    </div>
-  );
+  const formattedDate = format(date, "MM/DD/YYYY");
+  const formattedTime = format(date, "HH:MM:SS A");
+  const TimestampLayout = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-left: ${({ direction }) => (direction === "right" ? "0px" : "auto")};
+    margin-right: ${({ direction }) => (direction === "left" ? "0px" : "auto")};
+    font-size: 12px;
+    font-style: italic;
+    align-items: center;
+    :${props.direction === "left" ? "after" : "before"} {
+      content: "${formattedDate} @ ${formattedTime}";
+      line-height: 12px;
+      font-size: 100%;
+      font-style: italic;
+      position: relative;
+    }
+  `;
+  return <TimestampLayout direction={props.direction} />;
 };
+
+function useHover() {
+  const [value, setValue] = React.useState(false);
+  const debouncedValue = useDebounce(value, 15);
+
+  const ref = React.useRef(null);
+
+  const handleMouseOver = e => setValue(true);
+  const handleMouseOut = () => setValue(false);
+
+  React.useEffect(
+    () => {
+      const node = ref.current;
+      if (node) {
+        node.addEventListener("mouseover", handleMouseOver);
+        node.addEventListener("mouseout", handleMouseOut);
+
+        return () => {
+          node.removeEventListener("mouseover", handleMouseOver);
+          node.removeEventListener("mouseout", handleMouseOut);
+        };
+      }
+    },
+    [ref.current], // Recall only if ref changes
+  );
+
+  return [ref, debouncedValue];
+}
