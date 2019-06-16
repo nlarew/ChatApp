@@ -1,6 +1,4 @@
-/** @jsx jsx */
-import React, { useRef, useState, useEffect } from "react";
-import { css, jsx } from "@emotion/core";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useStitchAuth } from "./StitchAuth";
 import { addMessageToRoom, logCurrentStitchUser } from "./../stitch";

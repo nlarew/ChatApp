@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import * as R from "ramda";
 
-import {
-  // getChatrooms,
-  watchChatrooms,
-  getChatroomsUserIsIn,
-} from "./../stitch";
+import { watchChatrooms, getChatroomsUserIsIn } from "./../stitch";
 
 export function useWatchChatrooms() {
   const [rooms, setRooms] = useState([]);

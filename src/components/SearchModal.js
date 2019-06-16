@@ -112,33 +112,6 @@ const SearchInput = React.forwardRef(function(
     />
   );
 });
-const ActionInput = React.forwardRef(function(
-  { placeholder, actionText, handleSubmit, focusInput, hasError },
-  inputRef,
-) {
-  const input = useInput("");
-  React.useEffect(focusInput);
-  const handleKeyPress = e => {
-    if (e.key === "Enter") {
-      handleSubmit(input.value);
-    }
-  };
-  return (
-    <ActionInputLayout>
-      <Input
-        ref={ref => (inputRef.current = ref)}
-        placeholder={placeholder}
-        value={input.value}
-        onChange={input.onChange}
-        onKeyDown={handleKeyPress}
-        hasError={hasError}
-      />
-      <ActionButton onClick={() => handleSubmit(input.value)}>
-        {actionText}
-      </ActionButton>
-    </ActionInputLayout>
-  );
-});
 const Input = styled.input`
   flex-grow: 1;
   width: 100%;
