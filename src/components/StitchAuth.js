@@ -31,9 +31,7 @@ export function StitchAuthProvider(props) {
     isLoggedIn: hasLoggedInUser(),
     currentUser: getCurrentUser(),
   });
-  const [hasRegisteredListener, setHasRegisteredListener] = React.useState(
-    false,
-  );
+  const [hasRegisteredListener, setHasRegisteredListener] = React.useState(false);
 
   useEffect(() => {
     if (hasRegisteredListener) {
@@ -68,15 +66,16 @@ export function StitchAuthProvider(props) {
     };
   }, []);
 
+  // prettier-ignore
   const handleLogin = React.useCallback(
     async provider => {
-      const loginMethod = {
-        anonymous: () => loginAnonymous(),
-        facebook: () => loginFacebook(),
-        google: () => loginGoogle(),
-      }[provider];
       if (!authState.isLoggedIn) {
-        loginMethod();
+        switch(provider) {
+          case "anonymous": return loginAnonymous()
+          case "facebook": return loginFacebook()
+          case "google": return loginGoogle()
+          default: {}
+        }
       }
     },
     [authState],

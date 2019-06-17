@@ -63,20 +63,5 @@ const Layout = styled.div`
 `;
 function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
   const { isLoggedIn } = useStitchAuth();
-  // const loginStateRef = React.useRef();
-  // useEffect(() => {
-  //   const previousState = loginStateRef.current;
-  //   if (!previousState) {
-  //     loginStateRef.current = isLoggedIn;
-  //   }
-  //   if (
-  //     previousState &&
-  //     previousState !== false &&
-  //     previousState !== isLoggedIn
-  //   ) {
-  //     onLogout();
-  //   }
-  //   loginStateRef.current = isLoggedIn;
-  // }, [isLoggedIn, onLogout]);
   return isLoggedIn ? props.children : <LoginScreen />;
 }

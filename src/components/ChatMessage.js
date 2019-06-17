@@ -65,7 +65,8 @@ const Sender = React.memo(({ direction, sender }) => {
   const SenderPicture = styled.img`
     border-radius: 50%;
     height: 100%;
-    margin-left: 10px;
+    margin-left: ${direction === "left" ? "0px" : "10px"};
+    margin-right: ${direction === "right" ? "0px" : "10px"};
   `;
   return (
     <>
@@ -82,15 +83,12 @@ const Sender = React.memo(({ direction, sender }) => {
 const Message = styled.div`
   max-width: 60%;
   display: inline-block;
-  background-color: ${props =>
-    props.direction === "left" ? "lightgrey" : "lightblue"};
+  background-color: ${props => (props.direction === "left" ? "lightgrey" : "lightblue")};
   border-radius: 12px;
   margin-left: ${props => (props.direction === "left" ? "0px" : "auto")};
   margin-right: ${props => (props.direction === "right" ? "0px" : "auto")};
-  border-top-left-radius: ${props =>
-    props.direction === "left" ? "0px" : "12px"};
-  border-top-right-radius: ${props =>
-    props.direction === "right" ? "0px" : "12px"};
+  border-top-left-radius: ${props => (props.direction === "left" ? "0px" : "12px")};
+  border-top-right-radius: ${props => (props.direction === "right" ? "0px" : "12px")};
   border-bottom-left-radius: ${props =>
     props.direction === "left" ? props.hasNext && "0px" : "12px"};
   border-bottom-right-radius: ${props =>

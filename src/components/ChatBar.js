@@ -2,12 +2,11 @@
 import React from "react";
 import { css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
-import Textarea from "react-textarea-autosize";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ChatBar(props) {
   const { sendMessage, setMessageText, messageText } = props;
-  const shouldAllowMessageSends = messageText.length > 0 && !props.isArchived;
+  const shouldAllowMessageSends = messageText.length > 0;
   const handleMessageSend = () => {
     if (shouldAllowMessageSends) {
       sendMessage(messageText);
@@ -28,10 +27,7 @@ export default function ChatBar(props) {
         onChange={handleInput}
         onKeyDown={handleKeyPress}
       />
-      <SendButton
-        disabled={!shouldAllowMessageSends}
-        onClick={handleMessageSend}
-      />
+      <SendButton disabled={!shouldAllowMessageSends} onClick={handleMessageSend} />
     </Layout>
   );
 }
@@ -44,23 +40,6 @@ const Layout = styled.div`
   padding: 12px 12px;
   box-sizing: border-box;
   flex-grow: 0;
-`;
-const ChatBarTextArea = styled(Textarea)`
-  padding-left: 8px;
-  padding-right: 8px;
-  border: none;
-  border-radius: 4px;
-  flex-grow: 1;
-  line-height: 24px;
-  font-size: 16px;
-  resize: none;
-  overflow-y: scroll;
-  max-height: 100%;
-  // min-height: 100%;
-  &:focus {
-    outline: 0;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
-  }
 `;
 const MessageInput = styled.input`
   padding-left: 8px;
@@ -88,9 +67,7 @@ const SendButton = props => {
         border: none;
         margin-left: 12px;
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
-        background-color: ${props.disabled
-          ? "transparent"
-          : "rgba(0, 123, 255, 0.25)"};
+        background-color: ${props.disabled ? "transparent" : "rgba(0, 123, 255, 0.25)"};
         color: ${props.disabled ? "darkgray" : "black"};
         &:focus,
         :hover {

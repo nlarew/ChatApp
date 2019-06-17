@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useStitchAuth } from "./StitchAuth";
-import { archiveChatroom, removeUserFromRoom } from "./../stitch";
+import { removeUserFromRoom } from "./../stitch";
 
 export default function RoomList({ rooms = [], currentRoom, setCurrentRoom }) {
   const { currentUser } = useStitchAuth();
@@ -52,27 +52,16 @@ const List = styled.ul`
 `;
 export function Room({ room, ...props }) {
   const { currentUser } = useStitchAuth();
-  const isOwner = currentUser && room.owner_id === currentUser.id;
   const isMember = currentUser && room.members.includes(currentUser.id);
   const handleLeave = e => {
     e.stopPropagation();
     removeUserFromRoom(currentUser.id, room._id);
   };
-  const handleArchive = e => {
-    e.stopPropagation();
-    archiveChatroom(room._id);
-  };
   return (
-    <RoomListItem isArchived={room.isArchived} {...props}>
+    <RoomListItem {...props}>
       <NumMembers num={room.members.length} />
       <NumMessages num={room.messages.length} />
       <RoomName>{room.name}</RoomName>
-      {room.isArchived && "ARCHIVED"}
-      {isOwner && !room.isArchived && (
-        <RoomAction bgcolor="#E53A40" color="white" onClick={handleArchive}>
-          <DeleteIcon />
-        </RoomAction>
-      )}
       {isMember && (
         <RoomAction bgcolor="#E0E3DA" color="black" onClick={handleLeave}>
           <LeaveIcon />
@@ -83,7 +72,6 @@ export function Room({ room, ...props }) {
 }
 const RoomListItem = styled.li`
   background: ${props => props.isCurrentRoom && "palegoldenrod"};
-  background: ${props => props.isArchived && "darkgrey"};
   padding: 14px;
   border-bottom: 0.5px solid black;
   display: flex;

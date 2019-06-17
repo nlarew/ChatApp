@@ -6,12 +6,7 @@ import { createChatroom, searchForChatrooms, addUserToRoom } from "./../stitch";
 import InputModal from "./InputModal";
 import SearchModal from "./SearchModal";
 
-export default function Navbar({
-  rooms,
-  currentRoom,
-  unsetCurrentRoom,
-  addRoom,
-}) {
+export default function Navbar({ rooms, currentRoom, unsetCurrentRoom, addRoom }) {
   const {
     currentUser,
     isLoggedIn,
@@ -20,16 +15,14 @@ export default function Navbar({
   const [newRoomModalProps, newRoomModalIsOpen, newRoomModalActions] = useModal(
     "createNewRoom",
   );
-  const [searchModalProps, searchModalIsOpen, searchModalActions] = useModal(
-    "search",
-  );
+  const [searchModalProps, searchModalIsOpen, searchModalActions] = useModal("search");
   const [newRoomError, setNewRoomError] = React.useState(null);
   const createRoomWithName = async name => {
     if (newRoomError) {
       setNewRoomError(null);
     }
-    const room = await createChatroom({ name }).catch(err => {
-      console.log(err);
+    const room = await createChatroom(name).catch(err => {
+      console.error(err);
       const isDuplicate = /Duplicate key error/.test(err.message);
       if (isDuplicate) setNewRoomError("Room name is already in use.");
     });
@@ -53,9 +46,7 @@ export default function Navbar({
     searchedRooms => {
       if (currentUser) {
         const userIsInRoom = room => room.members.includes(currentUser.id);
-        const userRoomIds = rooms
-          .filter(userIsInRoom)
-          .map(r => r._id.toString());
+        const userRoomIds = rooms.filter(userIsInRoom).map(r => r._id.toString());
         const joinableRooms = searchedRooms.filter(
           searchedRoom => !userRoomIds.includes(searchedRoom._id.toString()),
         );
@@ -69,15 +60,9 @@ export default function Navbar({
   const NavTitle = () => {
     if (isLoggedIn) {
       if (currentRoom) {
-        const { isArchived, name } = currentRoom;
-        const text = isArchived ? `${name} - ARCHIVED` : name;
-        return text;
+        return currentRoom.name;
       } else {
-        return (
-          <Button onClick={searchModalActions.open}>
-            Search for Chatrooms
-          </Button>
-        );
+        return <Button onClick={searchModalActions.open}>Search for Chatrooms</Button>;
       }
     } else {
       return "ChatApp";

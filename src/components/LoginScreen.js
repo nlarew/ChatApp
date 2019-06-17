@@ -23,12 +23,7 @@ export default function LoginScreen(props) {
           {isHandlingLogin ? (
             <span>
               Logging in
-              <Loader
-                type="MutatingDot"
-                color="#00BFFF"
-                height="100"
-                width="100"
-              />
+              <Loader type="MutatingDot" color="#00BFFF" height="100" width="100" />
             </span>
           ) : (
             <ButtonGroup>
@@ -38,22 +33,13 @@ export default function LoginScreen(props) {
               >
                 Anonymous
               </ProviderButton>
-              <ProviderButton
-                provider="userpass"
-                onClick={emailModalActions.open}
-              >
+              <ProviderButton provider="userpass" onClick={emailModalActions.open}>
                 Email/Password
               </ProviderButton>
-              <ProviderButton
-                provider="facebook"
-                onClick={() => handleLogin("facebook")}
-              >
+              <ProviderButton provider="facebook" onClick={() => handleLogin("facebook")}>
                 Facebook
               </ProviderButton>
-              <ProviderButton
-                provider="google"
-                onClick={() => handleLogin("google")}
-              >
+              <ProviderButton provider="google" onClick={() => handleLogin("google")}>
                 Google
               </ProviderButton>
             </ButtonGroup>
@@ -74,7 +60,7 @@ const Layout = styled.div`
   flex-direction: column;
   height: calc(100vh - 48px);
   box-sizing: border-box;
-  background-color: lightgoldenrodyellow;
+  background-color: #8cd790;
   align-items: center;
   justify-content: center;
 `;
