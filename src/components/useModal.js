@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ReactModal from "react-modal";
 import styled from "@emotion/styled";
 

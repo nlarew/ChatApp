@@ -28,17 +28,10 @@ export function useStitchAuth() {
 // the React Context we created.
 export function StitchAuthProvider(props) {
   const [authState, setAuthState] = React.useState({
+    isLoading: true,
     isLoggedIn: hasLoggedInUser(),
     currentUser: getCurrentUser(),
   });
-  const [hasRegisteredListener, setHasRegisteredListener] = React.useState(false);
-
-  useEffect(() => {
-    if (hasRegisteredListener) {
-      handleOAuthRedirects();
-    }
-  }, [hasRegisteredListener]);
-
   useEffect(() => {
     const authListener = {
       onUserLoggedIn: (auth, loggedInUser) => {
@@ -59,10 +52,10 @@ export function StitchAuthProvider(props) {
       },
     };
     addAuthenticationListener(authListener);
-    setHasRegisteredListener(true);
+    handleOAuthRedirects()
+    setAuthState(state => ({ ...state, isLoading: false }))
     return () => {
       removeAuthenticationListener(authListener);
-      setHasRegisteredListener(false);
     };
   }, []);
 
@@ -90,8 +83,9 @@ export function StitchAuthProvider(props) {
 
   // We useMemo to improve performance by eliminating some re-renders
   const authInfo = React.useMemo(() => {
-    const { isLoggedIn, currentUser } = authState;
+    const { isLoading, isLoggedIn, currentUser } = authState;
     const value = {
+      isLoading,
       isLoggedIn,
       currentUser,
       actions: {

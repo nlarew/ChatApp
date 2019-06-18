@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import React from "react";
-import { css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -56,28 +54,26 @@ const MessageInput = styled.input`
   }
 `;
 const SendButton = props => {
+  const Button = styled.button`
+    height: 100%;
+    border-radius: 4px;
+    line-height: 16px;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    margin-left: 12px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+    background-color: ${props.disabled ? "transparent" : "rgba(0, 123, 255, 0.25)"};
+    color: ${props.disabled ? "darkgray" : "black"};
+    &:focus,
+    :hover {
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+    }
+  `;
   return (
-    <button
-      css={css`
-        height: 100%;
-        border-radius: 4px;
-        line-height: 16px;
-        font-size: 16px;
-        text-align: center;
-        border: none;
-        margin-left: 12px;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
-        background-color: ${props.disabled ? "transparent" : "rgba(0, 123, 255, 0.25)"};
-        color: ${props.disabled ? "darkgray" : "black"};
-        &:focus,
-        :hover {
-          outline: 0;
-          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
-        }
-      `}
-      onClick={props.onClick}
-    >
+    <Button onClick={props.onClick}>
       <FontAwesomeIcon icon="paper-plane" />
-    </button>
+    </Button>
   );
 };

@@ -5,29 +5,31 @@ import LoginScreen from "./LoginScreen";
 import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
-import { useChatrooms, useWatchChatrooms } from "./useChatroom";
 import { ToastContainer } from "react-toastify";
+import {
+  useChatrooms,
+  // useWatchChatrooms
+} from "./useChatroom";
 
 export default function ChatApp(props) {
-  const [currentRoom, setCurrentRoom] = useState(null);
-  // const [rooms, { addRoom, updateRooms, clearRooms }] = useChatrooms();
-  const [rooms, { addRoom, updateRooms, clearRooms }] = useWatchChatrooms();
-
-  const { currentUser } = useStitchAuth();
-  useEffect(() => {
-    updateRooms();
-  }, [currentUser]);
-  useEffect(() => {
-    if (currentRoom) {
-      const updatedRoom = rooms.find(
-        r => r._id.toString() === currentRoom._id.toString(),
-      );
-      setCurrentRoom(updatedRoom || null);
-    }
-  }, [rooms, currentRoom]);
-
+  const [rooms, { addRoom }] = useChatrooms();
+  // const [rooms, { addRoom }] = useWatchChatrooms();
+  const [currentRoom, setCurrentRoom, unsetCurrentRoom] = useCurrentRoom(rooms);
   return (
     <Layout>
+      <Navbar
+        rooms={rooms}
+        currentRoom={currentRoom}
+        unsetCurrentRoom={unsetCurrentRoom}
+        addRoom={addRoom}
+      />
+      <RequireLogin>
+        {currentRoom ? (
+          <ChatRoom room={currentRoom} />
+        ) : (
+          <RoomList rooms={rooms} setCurrentRoom={setCurrentRoom} />
+        )}
+      </RequireLogin>
       <ToastContainer
         position="top-right"
         autoClose={10000}
@@ -36,24 +38,6 @@ export default function ChatApp(props) {
         pauseOnHover={true}
         draggable={true}
       />
-      <Navbar
-        rooms={rooms}
-        currentRoom={currentRoom}
-        unsetCurrentRoom={() => setCurrentRoom(null)}
-        addRoom={addRoom}
-      />
-      <RequireLogin
-        onLogout={() => {
-          setCurrentRoom(null);
-          clearRooms();
-        }}
-      >
-        {currentRoom ? (
-          <ChatRoom room={currentRoom} />
-        ) : (
-          <RoomList rooms={rooms} setCurrentRoom={setCurrentRoom} />
-        )}
-      </RequireLogin>
     </Layout>
   );
 }
@@ -63,7 +47,24 @@ const Layout = styled.div`
   height: 100vh;
   box-sizing: border-box;
 `;
-function RequireLogin({ onLogout = () => {}, isLoading, ...props }) {
-  const { isLoggedIn } = useStitchAuth();
-  return isLoggedIn ? props.children : <LoginScreen />;
+function useCurrentRoom(rooms) {
+  const [currentRoom, setCurrentRoom] = useState(null);
+  useEffect(() => {
+    if (currentRoom) {
+      const currentRoomId = currentRoom._id.toString();
+      const updatedRoom = rooms.find(r => r._id.toString() === currentRoomId);
+      setCurrentRoom(updatedRoom || null);
+    }
+  }, [rooms, currentRoom]);
+  const unsetCurrentRoom = () => setCurrentRoom(null);
+  return [currentRoom, setCurrentRoom, unsetCurrentRoom];
+}
+function RequireLogin(props) {
+  const { isLoading, isLoggedIn } = useStitchAuth();
+  console.log("isLoading", isLoading)
+  if(isLoading) {
+    return null
+  } else {
+    return isLoggedIn ? props.children : <LoginScreen />;
+  }
 }

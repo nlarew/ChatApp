@@ -106,7 +106,7 @@ const RoomAction = styled.button`
 `;
 const MembersIcon = () => <FontAwesomeIcon icon="users" />;
 const MessagesIcon = () => <FontAwesomeIcon icon="comments" />;
-const DeleteIcon = () => <FontAwesomeIcon icon="times-circle" />;
+// const DeleteIcon = () => <FontAwesomeIcon icon="times-circle" />;
 const LeaveIcon = () => <FontAwesomeIcon icon="sign-out-alt" />;
 export const NumMembers = ({ num }) => (
   <RoomData>
