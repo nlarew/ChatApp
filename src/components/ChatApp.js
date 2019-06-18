@@ -8,7 +8,7 @@ import Navbar from "./Navbar";
 import { ToastContainer } from "react-toastify";
 import {
   useChatrooms,
-  // useWatchChatrooms
+  useWatchChatrooms
 } from "./useChatroom";
 
 export default function ChatApp(props) {
