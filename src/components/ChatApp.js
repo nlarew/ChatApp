@@ -61,7 +61,6 @@ function useCurrentRoom(rooms) {
 }
 function RequireLogin(props) {
   const { isLoading, isLoggedIn } = useStitchAuth();
-  console.log("isLoading", isLoading)
   if(isLoading) {
     return null
   } else {

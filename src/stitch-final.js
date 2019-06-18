@@ -52,7 +52,7 @@ export async function loginFacebook() {
 export async function loginGoogle() {
   return await app.auth.loginWithRedirect(new GoogleRedirectCredential());
 }
-export const handleOAuthRedirects = () => {
+export function handleOAuthRedirects() {
   if (app.auth.hasRedirectResult()) {
     return app.auth.handleRedirectResult();
   }
