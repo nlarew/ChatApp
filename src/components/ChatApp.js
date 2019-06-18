@@ -5,12 +5,14 @@ import LoginScreen from "./LoginScreen";
 import ChatRoom from "./ChatRoom";
 import RoomList from "./RoomList";
 import Navbar from "./Navbar";
-import { useWatchChatrooms } from "./useChatroom";
+import { useChatrooms, useWatchChatrooms } from "./useChatroom";
 import { ToastContainer } from "react-toastify";
 
 export default function ChatApp(props) {
   const [currentRoom, setCurrentRoom] = useState(null);
+  // const [rooms, { addRoom, updateRooms, clearRooms }] = useChatrooms();
   const [rooms, { addRoom, updateRooms, clearRooms }] = useWatchChatrooms();
+
   const { currentUser } = useStitchAuth();
   useEffect(() => {
     updateRooms();

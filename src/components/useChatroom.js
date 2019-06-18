@@ -3,6 +3,25 @@ import * as R from "ramda";
 
 import { watchChatrooms, getChatroomsUserIsIn } from "./../stitch";
 
+export function useChatrooms() {
+  const [rooms, setRooms] = useState([]);
+  const addRoom = room => {
+    setRooms([...rooms, room]);
+  };
+  const clearRooms = () => {
+    setRooms([]);
+  };
+  const updateRooms = async () => {
+    const rooms = await getChatroomsUserIsIn();
+    setRooms(rooms);
+  };
+  useEffect(() => {
+    updateRooms();
+  }, []);
+
+  return [rooms, { addRoom, updateRooms, clearRooms }];
+}
+
 export function useWatchChatrooms() {
   const [rooms, setRooms] = useState([]);
   const [roomIds, setRoomIds] = useState([]);
@@ -28,9 +47,7 @@ export function useWatchChatrooms() {
             updateRooms();
           } else {
             const findRoomIndex = R.findIndex(R.propEq("_id", room._id));
-            setRooms(rooms =>
-              R.adjust(findRoomIndex(rooms), () => room, rooms),
-            );
+            setRooms(rooms => R.adjust(findRoomIndex(rooms), () => room, rooms));
           }
         });
       });
