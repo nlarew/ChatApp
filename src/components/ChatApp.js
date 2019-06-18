@@ -12,8 +12,8 @@ import {
 } from "./useChatroom";
 
 export default function ChatApp(props) {
-  const [rooms, { addRoom }] = useChatrooms();
-  // const [rooms, { addRoom }] = useWatchChatrooms();
+  // const [rooms, { addRoom }] = useChatrooms();
+  const [rooms, { addRoom }] = useWatchChatrooms();
   const [currentRoom, setCurrentRoom, unsetCurrentRoom] = useCurrentRoom(rooms);
   return (
     <Layout>
