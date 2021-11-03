@@ -26,7 +26,7 @@
     "react-typography": "0.16.19",
     "typography": "0.16.19",
     "typography-theme-us-web-design-standards": "0.16.19",
-    "validator": "11.0.0"
+    "validator": "13.7.0"
   },
   "devDependencies": {
     "typescript": "3.3.3"
